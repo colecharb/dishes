@@ -1,12 +1,13 @@
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import { DarkTheme, DefaultTheme, NavigationContainer, ThemeProvider } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
-
 import { useColorScheme } from '@/components/useColorScheme';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { useThemeColor } from '@/components/Themed';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -50,10 +51,49 @@ function RootLayoutNav() {
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
-      </Stack>
+      <SafeAreaProvider>
+        <Stack
+          screenOptions={{
+            headerShown: false,
+          }}
+        >
+          <Stack.Screen
+            name='index'
+            options={{
+              headerTitle: 'Recipes',
+              headerShown: false,
+              // headerRight: () => (
+              //   <Link href="/SettingsModal" asChild>
+              //     <Pressable>
+              //       {({ pressed }) => (
+              //         <FontAwesome
+              //           name="info-circle"
+              //           size={25}
+              //           color={Colors[colorScheme ?? 'light'].text}
+              //           style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
+              //         />
+              //       )}
+              //     </Pressable>
+              //   </Link>
+              // ),
+            }}
+          />
+          <Stack.Screen
+            name="recipe"
+            options={{
+              headerShown: true,
+              headerLargeTitle: true,
+              headerShadowVisible: false,
+              headerStyle: { backgroundColor: useThemeColor({}, 'background') },
+              headerLargeTitleStyle: { fontWeight: '900', }
+            }}
+          />
+          <Stack.Screen
+            name="settingsModal"
+            options={{ presentation: 'modal' }}
+          />
+        </Stack>
+      </SafeAreaProvider>
     </ThemeProvider>
   );
 }
