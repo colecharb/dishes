@@ -15,6 +15,8 @@ export default function RecipeScreen() {
 
   useSetOptions({ title: recipe?.name });
 
+  const styles = useStyles();
+
   // const route = useRoute();
   // console.log({ route });
 
@@ -68,24 +70,27 @@ export default function RecipeScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    padding: Layout.spacer,
-    paddingTop: 100 + Layout.spacer,
-    gap: Layout.spacer * 2,
-  },
-  recipeName: {
-    fontSize: 35,
-    fontWeight: 900,
-  },
-  section: {
-    gap: Layout.spacer,
-  },
-  sectionContent: {
-    gap: Layout.spacer / 2,
-  },
-  heading: {
-    fontSize: 30,
-    fontWeight: 200,
-  }
-});
+const useStyles = () => {
+  return StyleSheet.create({
+    container: {
+      paddingHorizontal: Layout.spacer,
+      paddingTop: 100 + Layout.spacer,
+      gap: Layout.spacer * 2,
+
+    },
+    recipeName: {
+      fontSize: 35,
+      fontWeight: 900,
+    },
+    section: {
+      gap: Layout.spacer,
+    },
+    sectionContent: {
+      gap: Layout.spacer / 2,
+    },
+    heading: {
+      fontSize: 30,
+      fontWeight: 200,
+    }
+  });
+};
