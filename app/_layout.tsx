@@ -6,7 +6,6 @@ import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
 import { useColorScheme } from '@/components/useColorScheme';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { useThemeColor } from '@/components/Themed';
 
 export {
@@ -51,17 +50,19 @@ function RootLayoutNav() {
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <SafeAreaProvider>
         <Stack
           screenOptions={{
-            headerShown: false,
+          headerLargeTitle: true,
+          headerShadowVisible: false,
+          headerStyle: { backgroundColor: useThemeColor({}, 'background') },
+          headerLargeTitleStyle: { fontWeight: '900' },
           }}
         >
           <Stack.Screen
             name='index'
-            options={{
-              headerTitle: 'Recipes',
+          options={{
               headerShown: false,
+            title: 'Recipes'
               // headerRight: () => (
               //   <Link href="/SettingsModal" asChild>
               //     <Pressable>
@@ -82,18 +83,13 @@ function RootLayoutNav() {
             name="recipe"
             options={{
               headerShown: true,
-              headerLargeTitle: true,
-              headerShadowVisible: false,
-              headerStyle: { backgroundColor: useThemeColor({}, 'background') },
-              headerLargeTitleStyle: { fontWeight: '900', }
             }}
           />
           <Stack.Screen
             name="settingsModal"
             options={{ presentation: 'modal' }}
           />
-        </Stack>
-      </SafeAreaProvider>
+      </Stack>
     </ThemeProvider>
   );
 }
