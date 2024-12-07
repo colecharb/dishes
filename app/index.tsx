@@ -1,21 +1,44 @@
-import { FlatList, KeyboardAvoidingView, ListRenderItem, SafeAreaView, ScrollView, StyleSheet } from 'react-native';
+import { Button, FlatList, Keyboard, KeyboardAvoidingView, ListRenderItem, Pressable, SafeAreaView, ScrollView, StyleSheet, TextInput } from 'react-native';
 
-import { Text, View } from '@/components/Themed';
-import LongText from '@/components/LongText';
-import SafeAreaFlatList from '@/components/SafeAreaFlatList';
-import { Recipe, RECIPES } from '@/constants/Recipes';
+import { type Recipe, RECIPES } from '@/constants/Recipes';
 import RecipeListItem from '@/components/RecipeListItem';
-import RecipeRenderItem from '@/components/RecipeListItem';
 import Layout from '@/constants/Layout';
-import SearchBar from '@/components/SearchBar';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
+import { StatusBar } from 'expo-status-bar';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { View } from '@/components/Themed';
 
 
 
 export default function TabOneScreen() {
   const styles = useStyles();
+  const safeAreaInsets = useSafeAreaInsets();
+
+  const searchInputRef = useRef<TextInput>(null);
 
   const [searchQuery, setSearchQuery] = useState('');
+  const [keyboardVisible, setKeyboardVisible] = useState(false);
+
+  const filteredRecipes = RECIPES.filter(
+    (recipe) => [
+      recipe.name,
+      // ...recipe.ingredients,
+      // ...recipe.method,
+    ].some((value) => (
+      value.toLowerCase().includes(
+        searchQuery.toLowerCase().trim()
+      ))
+    )
+  );
+
+  Keyboard.addListener('keyboardWillShow', () => setKeyboardVisible(true));
+  Keyboard.addListener('keyboardWillHide', () => setKeyboardVisible(false));
+
+  const onPressClearSearch = () => {
+    setSearchQuery('');
+    searchInputRef.current?.clear();
+    Keyboard.dismiss();
+  }
 
   const renderItem: ListRenderItem<Recipe> = (
     { item: recipe }
@@ -23,44 +46,92 @@ export default function TabOneScreen() {
     <RecipeListItem recipe={recipe} />
   );
 
-  const ListHeaderComponent = () => (
-    <SearchBar
-      onChangeText={(text) => setSearchQuery(text.toLowerCase().trim())}
-    />
-  );
-
   return (
     <KeyboardAvoidingView
+      style={styles.keyboardAvoidingView}
       behavior='height'
     >
-      <SafeAreaFlatList<Recipe>
+      <StatusBar hidden />
+
+      <FlatList<Recipe>
         inverted
-        keyExtractor={(r) => r.id}
+        contentInset={{ bottom: safeAreaInsets.top }}
         style={styles.flatList}
         contentContainerStyle={styles.flatListContentContainer}
-        data={RECIPES}
+        data={filteredRecipes}
+        keyExtractor={(r) => r.id}
         renderItem={renderItem}
+        showsVerticalScrollIndicator={false}
       />
+
+      <View style={styles.divider} />
+
+      <View style={[styles.searchBarContainer, keyboardVisible ? styles.searchBarContainerKeyboard : {}]}>
+        <TextInput
+          ref={searchInputRef}
+          selectionColor={'white'}
+          style={styles.searchBarText}
+          onChangeText={(text) => setSearchQuery(text)}
+          placeholder='Search...'
+        />
+
+        <Button
+          title='clear'
+          onPress={onPressClearSearch}
+        />
+      </View>
+
     </KeyboardAvoidingView>
   );
 }
 
 const useStyles = () => {
+  const safeAreaInsets = useSafeAreaInsets();
+
   return StyleSheet.create({
     flatList: {
       // flex: 1,
     },
     flatListContentContainer: {
-      padding: Layout.spacer
+      // padding: Layout.spacer,
+      // gap: Layout.spacer,
+      paddingTop: Layout.spacer,
+    },
+    keyboardAvoidingView: {
+      flex: 1,
+
+      // backgroundColor: 'grey',
+      // borderColor: 'red',
+      // borderWidth: 3,
+    },
+    searchBarContainer: {
+      backgroundColor: 'transparent',
+      marginBottom: safeAreaInsets.bottom,
+      padding: Layout.spacer,
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+    },
+    searchBarContainerKeyboard: {
+      marginBottom: 0,
+    },
+    searchBarText: {
+      color: 'grey',
+      fontSize: 25,
+      fontWeight: 900,
+      fontStyle: 'italic',
+      // borderColor: 'grey',
+      // borderWidth: 2,
+      // paddingVertical: Layout.spacer / 2,
+      // paddingHorizontal: Layout.spacer,
+      // borderRadius: 50
+    },
+    searchBarClearButton: {
+
+    },
+    divider: {
+      marginHorizontal: Layout.spacer,
+      height: Layout.borderWidth,
+      backgroundColor: 'grey'
     }
-    // title: {
-    //   fontSize: 20,
-    //   fontWeight: 'bold',
-    // },
-    // separator: {
-    //   marginVertical: 30,
-    //   height: 1,
-    //   width: '80%',
-    // },
   });
 };
