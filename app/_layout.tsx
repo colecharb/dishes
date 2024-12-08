@@ -62,7 +62,7 @@ function RootLayoutNav() {
             name='index'
           options={{
               headerShown: false,
-            title: 'Recipes'
+              title: 'Recipes'
               // headerRight: () => (
               //   <Link href="/SettingsModal" asChild>
               //     <Pressable>
