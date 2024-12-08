@@ -62,6 +62,7 @@ export default function TabOneScreen() {
         keyExtractor={(r) => r.id}
         renderItem={renderItem}
         showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps='handled'
       />
 
       <View style={styles.divider} />
@@ -115,6 +116,7 @@ const useStyles = () => {
       marginBottom: 0,
     },
     searchBarText: {
+      flex: 1,
       color: 'grey',
       fontSize: 25,
       fontWeight: 900,
