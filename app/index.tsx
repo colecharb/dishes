@@ -94,16 +94,10 @@ const useStyles = () => {
       // flex: 1,
     },
     flatListContentContainer: {
-      // padding: Layout.spacer,
-      // gap: Layout.spacer,
       paddingTop: Layout.spacer,
     },
     keyboardAvoidingView: {
       flex: 1,
-
-      // backgroundColor: 'grey',
-      // borderColor: 'red',
-      // borderWidth: 3,
     },
     searchBarContainer: {
       backgroundColor: 'transparent',
@@ -121,11 +115,6 @@ const useStyles = () => {
       fontSize: 25,
       fontWeight: 900,
       fontStyle: 'italic',
-      // borderColor: 'grey',
-      // borderWidth: 2,
-      // paddingVertical: Layout.spacer / 2,
-      // paddingHorizontal: Layout.spacer,
-      // borderRadius: 50
     },
     searchBarClearButton: {
 
