@@ -1,5 +1,5 @@
 import { Recipe } from '@/constants/Recipes';
-import RecipeStorage from '@/helpers/recipeStorage.helper';
+import RecipeStorage from '@/helpers/recipeStorage';
 import { useState, useEffect } from 'react';
 
 const useRecipe = (recipeId: string) => {
