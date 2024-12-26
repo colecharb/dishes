@@ -58,35 +58,41 @@ function RootLayoutNav() {
           headerLargeTitleStyle: { fontWeight: '900' },
           }}
         >
-          <Stack.Screen
-            name='index'
+        <Stack.Screen
+          name='index'
           options={{
-              headerShown: false,
-              title: 'Recipes'
-              // headerRight: () => (
-              //   <Link href="/SettingsModal" asChild>
-              //     <Pressable>
-              //       {({ pressed }) => (
-              //         <FontAwesome
-              //           name="info-circle"
-              //           size={25}
-              //           color={Colors[colorScheme ?? 'light'].text}
-              //           style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
-              //         />
-              //       )}
-              //     </Pressable>
-              //   </Link>
-              // ),
-            }}
-          />
-          <Stack.Screen
-            name="recipe"
-            options={{
-              headerShown: true,
-            }}
-          />
-          <Stack.Screen
-            name="settingsModal"
+            headerShown: false,
+            title: 'Recipes'
+            // headerRight: () => (
+            //   <Link href="/SettingsModal" asChild>
+            //     <Pressable>
+            //       {({ pressed }) => (
+            //         <FontAwesome
+            //           name="info-circle"
+            //           size={25}
+            //           color={Colors[colorScheme ?? 'light'].text}
+            //           style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
+            //         />
+            //       )}
+            //     </Pressable>
+            //   </Link>
+            // ),
+          }}
+        />
+        <Stack.Screen
+          name="recipe"
+          options={{
+            headerShown: true,
+          }}
+        />
+        <Stack.Screen
+          name="new-recipe"
+          options={{
+            headerShown: true,
+          }}
+        />
+        <Stack.Screen
+          name="settings"
             options={{ presentation: 'modal' }}
           />
       </Stack>
