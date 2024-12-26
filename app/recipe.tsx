@@ -6,12 +6,13 @@ import { useLocalSearchParams, useNavigation } from 'expo-router';
 import SafeAreaScrollView from '@/components/SafeAreaScrollView';
 import Layout from '@/constants/Layout';
 import useSetOptions from '@/hooks/useSetOptions';
+import useRecipe from '@/hooks/useRecipe';
 
 type Params = RootStackParamList['recipe'];
 
 export default function RecipeScreen() {
   const { recipeId } = useLocalSearchParams<RootStackParamList['recipe']>();
-  const recipe = RECIPES.find(r => r.id === recipeId);
+  const recipe = useRecipe(recipeId);
 
   useSetOptions({ title: recipe?.name });
 
@@ -57,7 +58,7 @@ export default function RecipeScreen() {
         <View style={styles.sectionContent}>
           {recipe.method.map(
             (step, index) => (
-              <Text key={step}>
+              <Text style={styles.sectionText} key={step}>
                 {`${index + 1}.  ${step}`}
               </Text>
             )
@@ -87,6 +88,9 @@ const useStyles = () => {
     },
     sectionContent: {
       gap: Layout.spacer / 2,
+    },
+    sectionText: {
+      color: 'white',
     },
     heading: {
       fontSize: 30,
