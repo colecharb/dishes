@@ -1,14 +1,15 @@
 import { Button, FlatList, Keyboard, KeyboardAvoidingView, ListRenderItem, Pressable, SafeAreaView, ScrollView, SectionList, SectionListData, SectionListProps, StyleSheet, TextInput } from 'react-native';
 
-import { type Recipe, RECIPES } from '@/constants/Recipes';
+import { type Recipe } from '@/constants/Recipes';
 import RecipeListItem from '@/components/RecipeListItem';
 import Layout from '@/constants/Layout';
 import { useRef, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Text, View } from '@/components/Themed';
-import { FontAwesome, FontAwesome5, FontAwesome6 } from '@expo/vector-icons';
+import { FontAwesome } from '@expo/vector-icons';
 import { Link } from 'expo-router';
+import useRecipes from '@/hooks/useRecipes';
 
 type SearchResultSection = {
   title: string;
@@ -23,9 +24,11 @@ export default function TabOneScreen() {
   const [searchQuery, setSearchQuery] = useState('');
   const [keyboardVisible, setKeyboardVisible] = useState(false);
 
+  const { recipes, removeRecipe } = useRecipes();  
+
   const titleFilteredRecipes = (
     searchQuery
-      ? RECIPES.filter(
+      ? recipes.filter(
         (recipe) => recipe.name.toLowerCase().includes(
           searchQuery.toLowerCase().trim()
         )
@@ -35,7 +38,7 @@ export default function TabOneScreen() {
 
   const ingredientFilteredRecipes = (
     searchQuery
-      ? RECIPES.filter(
+      ? recipes.filter(
         (recipe) => (
           recipe.ingredients.some(
             (ingredient) => ingredient.includes(searchQuery.toLowerCase().trim())
@@ -68,7 +71,14 @@ export default function TabOneScreen() {
   const renderItem: ListRenderItem<Recipe> = (
     { item: recipe }
   ) => (
-    <RecipeListItem recipe={recipe} />
+    <View style={styles.renderItem}>
+      <RecipeListItem recipe={recipe} />
+      {/* <Button
+        title='del'
+        color='red'
+        onPress={() => removeRecipe(recipe.id)}
+      /> */}
+    </View>
   );
 
   const renderSectionHeader: SectionListProps<Recipe, SearchResultSection>['renderSectionHeader'] = (
@@ -121,7 +131,7 @@ export default function TabOneScreen() {
               contentInset={{ bottom: safeAreaInsets.top }}
               style={styles.flatList}
               contentContainerStyle={styles.flatListContentContainer}
-              data={RECIPES}
+              data={recipes}
               keyExtractor={(r) => r.id}
               renderItem={renderItem}
               showsVerticalScrollIndicator={false}
@@ -204,6 +214,10 @@ const useStyles = () => {
       fontVariant: [
         'small-caps'
       ],
+    },
+    renderItem: {
+      // flexDirection: 'row',
+      // justifyContent: 'space-between',
     },
     bottomControlsContainer: {
       marginBottom: safeAreaInsets.bottom,
