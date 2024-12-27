@@ -1,25 +1,47 @@
-import { StyleSheet } from 'react-native';
+import { Alert, Button, StyleSheet } from 'react-native';
 import { Text, View } from '@/components/Themed';
-import { RECIPES, type Recipe } from '@/constants/Recipes';
 import RootStackParamList from '@/types/RootStackParamList';
 import { useLocalSearchParams, useNavigation } from 'expo-router';
 import SafeAreaScrollView from '@/components/SafeAreaScrollView';
 import Layout from '@/constants/Layout';
 import useSetOptions from '@/hooks/useSetOptions';
+import useRecipes from '@/hooks/useRecipes';
 import useRecipe from '@/hooks/useRecipe';
 
 type Params = RootStackParamList['recipe'];
 
 export default function RecipeScreen() {
   const { recipeId } = useLocalSearchParams<RootStackParamList['recipe']>();
+  const { removeRecipe } = useRecipes();
   const recipe = useRecipe(recipeId);
+
+  const navigation = useNavigation();
 
   useSetOptions({ title: recipe?.name });
 
-  const styles = useStyles();
+  const deleteAndGoBack = () => {
+    removeRecipe(recipeId)
+      .then(() => navigation.goBack());
+  };
 
-  // const route = useRoute();
-  // console.log({ route });
+  const onPressDelete = () => {
+    Alert.alert('Deleting Recipe',
+      'Are you sure you want to delete this recipe?',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: deleteAndGoBack,
+        }
+      ],
+    );
+  }
+
+  const styles = useStyles();
 
   if (!recipe) {
     return (
@@ -65,6 +87,12 @@ export default function RecipeScreen() {
           )}
         </View>
       </View>
+
+      <Button
+        title='Delete'
+        color='red'
+        onPress={onPressDelete}
+      />
 
 
     </SafeAreaScrollView>
