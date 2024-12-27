@@ -1,5 +1,5 @@
 import { Recipe } from '@/constants/Recipes';
-import RecipeStorage from '@/helpers/recipeStorage';
+import RecipeStorage from '@/helpers/RecipeStorage';
 import recipesAtom from '@/jotai/recipesAtom';
 import { useAtom } from 'jotai';
 import { useEffect } from 'react';
@@ -7,8 +7,11 @@ import { useEffect } from 'react';
 const useRecipes = () => {
   const [recipesAtomValue, setRecipesAtomValue] = useAtom(recipesAtom);
 
+  // console.log('Recipes Atom Value:', JSON.stringify(recipesAtomValue, null, 2));
+
+
   const fetchRecipes = async () => {
-    const storedRecipes = await RecipeStorage.getAllRecipes();
+    const storedRecipes = await RecipeStorage.getAll();
     setRecipesAtomValue(storedRecipes);
   };
 
@@ -16,15 +19,15 @@ const useRecipes = () => {
     fetchRecipes();
   }, []);
 
-  const addRecipe = (recipe: Recipe) => (
-    RecipeStorage.saveRecipe(recipe)
+  const saveRecipe = (recipe: Recipe) => (
+    RecipeStorage.save(recipe)
       .then(() => setRecipesAtomValue(
         (prev) => [...prev, recipe]
       ))
   );
 
   const removeRecipe = (recipeId: string) => (
-    RecipeStorage.deleteRecipe(recipeId)
+    RecipeStorage.delete(recipeId)
       .then(() => setRecipesAtomValue(
         (prev) => prev.filter((recipe) => recipe.id !== recipeId)
       ))
@@ -38,7 +41,7 @@ const useRecipes = () => {
 
   return {
     recipes: recipesAtomValue,
-    addRecipe,
+    saveRecipe,
     removeRecipe,
   };
 };
