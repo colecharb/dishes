@@ -15,7 +15,7 @@ type SearchResultSection = {
   title: string;
 }
 
-export default function TabOneScreen() {
+export default function Recipes() {
   const styles = useStyles();
   const safeAreaInsets = useSafeAreaInsets();
 
@@ -24,7 +24,7 @@ export default function TabOneScreen() {
   const [searchQuery, setSearchQuery] = useState('');
   const [keyboardVisible, setKeyboardVisible] = useState(false);
 
-  const { recipes, removeRecipe } = useRecipes();  
+  const { recipes } = useRecipes();  
 
   const titleFilteredRecipes = (
     searchQuery
@@ -73,11 +73,6 @@ export default function TabOneScreen() {
   ) => (
     <View style={styles.renderItem}>
       <RecipeListItem recipe={recipe} />
-      {/* <Button
-        title='del'
-        color='red'
-        onPress={() => removeRecipe(recipe.id)}
-      /> */}
     </View>
   );
 
@@ -104,6 +99,15 @@ export default function TabOneScreen() {
       behavior='height'
     >
       <StatusBar hidden />
+
+      <Link asChild href={'/settings'}>
+        <FontAwesome
+          style={styles.settingsButton}
+          name='gears'
+          size={25}
+          color='white'
+        />
+      </Link>
 
       {
         searchQuery
@@ -190,6 +194,16 @@ const useStyles = () => {
   const safeAreaInsets = useSafeAreaInsets();
 
   return StyleSheet.create({
+    settingsButton: {
+      position: 'absolute',
+      // top: safeAreaInsets.top,
+      // left: safeAreaInsets.left,
+      zIndex: 10,
+      shadowRadius: Layout.spacer,
+      shadowColor: 'black',
+      shadowOpacity: 0.5,
+      margin: Layout.spacer,
+    },
     flatList: {
       // flex: 1,
     },
