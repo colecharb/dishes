@@ -1,5 +1,5 @@
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { DarkTheme, DefaultTheme, NavigationContainer, ThemeProvider } from '@react-navigation/native';
+import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
@@ -50,14 +50,14 @@ function RootLayoutNav() {
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-        <Stack
-          screenOptions={{
+      <Stack
+        screenOptions={{
           headerLargeTitle: true,
           headerShadowVisible: false,
           headerStyle: { backgroundColor: useThemeColor({}, 'background') },
           headerLargeTitleStyle: { fontWeight: '900' },
-          }}
-        >
+        }}
+      >
         <Stack.Screen
           name='index'
           options={{
@@ -93,8 +93,11 @@ function RootLayoutNav() {
         />
         <Stack.Screen
           name="settings"
-            options={{ presentation: 'modal' }}
-          />
+          options={{
+            presentation: 'modal',
+            title: 'Settings',
+          }}
+        />
       </Stack>
     </ThemeProvider>
   );
