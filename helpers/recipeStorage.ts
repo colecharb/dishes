@@ -21,12 +21,18 @@ const getRecipeIds = async (): Promise<string[]> => (
     )
 );
 
-const addToRecipeIds = async (id: string): Promise<void> => {
+const addToRecipeIds = async (ids: string[]): Promise<void> => {
   const recipeIds = await getRecipeIds();
-  if (recipeIds.includes(id)) {
-    return;
-  }
-  const newRecipeIds = [...recipeIds, id];
+
+  let newRecipeIds = recipeIds;
+
+  ids.forEach(id => {
+    if (newRecipeIds.includes(id)) {
+      return;
+    }
+    newRecipeIds = [...newRecipeIds, id];
+  });
+
 
   await AsyncStorage.setItem(RECIPE_ID_INDEX_KEY, JSON.stringify(newRecipeIds))
     .catch((error) => console.error('Error adding recipe ID:', error));
@@ -42,13 +48,23 @@ const removeFromRecipeIds = async (id: string): Promise<void> => {
 
 // RECIPES //
 
-const saveRecipe = (recipe: Recipe): Promise<void> => (
+const save = (recipe: Recipe): Promise<void> => (
   AsyncStorage.setItem(recipe.id, JSON.stringify(recipe))
-    .then(() => addToRecipeIds(recipe.id))
+    .then(() => addToRecipeIds([recipe.id]))
     .catch((error) => console.error('Error saving recipe:', error))
 );
 
-const getRecipe = (id: string): Promise<Recipe | null> => (
+const saveMultiple = async (recipes: Recipe[]): Promise<void> => {
+  const recipeIds = recipes.map((recipe) => recipe.id);
+  const recipeKeyValuePairs = recipes.map<[string, string]>(
+    (recipe) => [recipe.id, JSON.stringify(recipe)]
+  );
+  await AsyncStorage.multiSet(recipeKeyValuePairs)
+    .then(() => addToRecipeIds(recipeIds))
+    .catch((error) => console.error('Error saving recipe:', error));
+};
+
+const get = (id: string): Promise<Recipe | null> => (
   AsyncStorage.getItem(id)
     .then((jsonString) => jsonString ? JSON.parse(jsonString) as Recipe : null)
     .catch((error) => {
@@ -57,7 +73,7 @@ const getRecipe = (id: string): Promise<Recipe | null> => (
     })
 );
 
-const getAllRecipes = (): Promise<Recipe[]> => (
+const getAll = (): Promise<Recipe[]> => (
   getRecipeIds()
     .then((keys) => {
       return AsyncStorage.multiGet(keys);
@@ -85,9 +101,12 @@ const deleteRecipe = (id: string): Promise<void> => (
     })
 );
 
-export default {
-  saveRecipe,
-  getRecipe,
-  getAllRecipes,
-  deleteRecipe,
+const RecipeStorage = {
+  save,
+  saveMultiple,
+  get,
+  getAll,
+  delete: deleteRecipe,
 };
+
+export default RecipeStorage;
