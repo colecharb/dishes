@@ -12,7 +12,7 @@ import useRecipes from '@/hooks/useRecipes';
 type Params = RootStackParamList['recipe'];
 
 export default function NewRecipeScreen() {
-  const { addRecipe } = useRecipes();
+  const { saveRecipe } = useRecipes();
 
   const [recipeName, setRecipeName] = useState<string>('');
   const [recipeIngredients, setRecipeIngredients] = useState<string[]>(['']);
@@ -45,7 +45,7 @@ export default function NewRecipeScreen() {
   useSetOptions({ title: recipeName });
 
   const onPressSave = () => (
-    addRecipe({
+    saveRecipe({
       id: uuid(),
       name: recipeName,
       ingredients: recipeIngredients,
@@ -60,7 +60,10 @@ export default function NewRecipeScreen() {
       behavior='height'
       style={styles.keyboardAvoidingView}
     >
-      <SafeAreaScrollView keyboardShouldPersistTaps='handled' contentContainerStyle={styles.container}>
+      <SafeAreaScrollView
+        keyboardShouldPersistTaps='handled'
+        contentContainerStyle={styles.container}
+      >
 
         <View style={styles.section}>
           <TextInput
