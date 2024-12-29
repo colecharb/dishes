@@ -199,9 +199,9 @@ const useStyles = () => {
       // top: safeAreaInsets.top,
       // left: safeAreaInsets.left,
       zIndex: 10,
-      shadowRadius: Layout.spacer,
-      shadowColor: 'black',
-      shadowOpacity: 0.5,
+      // shadowRadius: Layout.spacer,
+      // shadowColor: 'black',
+      // shadowOpacity: 0.5,
       margin: Layout.spacer,
     },
     flatList: {
