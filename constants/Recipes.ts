@@ -1,5 +1,3 @@
-import { IdType } from '@/types/common';
-
 type Recipe = {
   id: string,
   name: string,
