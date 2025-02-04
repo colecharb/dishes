@@ -15,31 +15,17 @@ type ThemeProps = {
 export type TextProps = ThemeProps & DefaultText['props'];
 export type ViewProps = ThemeProps & DefaultView['props'];
 
-// export function useThemeColor(
-//   props: { light?: string; dark?: string },
-//   colorName: keyof typeof Colors.light & keyof typeof Colors.dark
-// ) {
-//   const theme = useColorScheme() ?? 'light';
-//   const colorFromProps = props[theme];
+// export function Text(props: TextProps) {
+//   const { colors } = useDishesTheme();
+//   const { style, lightColor, darkColor, ...otherProps } = props;
 
-//   if (colorFromProps) {
-//     return colorFromProps;
-//   } else {
-//     return Colors[theme][colorName];
-//   }
+//   return (
+//     <DefaultText
+//       style={[{ color: colors.primary, fontSize: 18 }, style]}
+//       {...otherProps}
+//     />
+//   );
 // }
-
-export function Text(props: TextProps) {
-  const { colors } = useDishesTheme();
-  const { style, lightColor, darkColor, ...otherProps } = props;
-
-  return (
-    <DefaultText
-      style={[{ color: colors.primary, fontSize: 18 }, style]}
-      {...otherProps}
-    />
-  );
-}
 
 export function View(props: ViewProps) {
   const { colors } = useDishesTheme();
