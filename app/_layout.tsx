@@ -64,7 +64,8 @@ function RootLayoutNav() {
         headerLargeTitle: true,
         headerShadowVisible: false,
         headerStyle: { backgroundColor: colors.background },
-        headerLargeTitleStyle: { fontWeight: '900' },
+        headerTintColor: colors.primary,
+        headerLargeTitleStyle: { fontWeight: '900', color: colors.onBackground },
       }}
     >
       <Stack.Screen
@@ -76,9 +77,11 @@ function RootLayoutNav() {
       />
       <Stack.Screen
         name='recipe'
-        options={{
-          headerShown: true,
-        }}
+        options={
+          {
+            // headerShown: true,
+          }
+        }
       />
       <Stack.Screen
         name='new-recipe'
