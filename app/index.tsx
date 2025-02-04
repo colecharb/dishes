@@ -1,8 +1,19 @@
-import { Button, FlatList, Keyboard, KeyboardAvoidingView, ListRenderItem, Pressable, SafeAreaView, ScrollView, SectionList, SectionListData, SectionListProps, StyleSheet, TextInput } from 'react-native';
+import {
+  Button,
+  FlatList,
+  Keyboard,
+  KeyboardAvoidingView,
+  ListRenderItem,
+  Pressable,
+  SectionList,
+  SectionListData,
+  SectionListProps,
+  StyleSheet,
+  TextInput,
+} from 'react-native';
 
 import { type Recipe } from '@/constants/Recipes';
 import RecipeListItem from '@/components/RecipeListItem';
-import Layout from '@/constants/Layout';
 import { useRef, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -10,10 +21,11 @@ import { Text, View } from '@/components/Themed';
 import { FontAwesome } from '@expo/vector-icons';
 import { Link } from 'expo-router';
 import useRecipes from '@/hooks/useRecipes';
+import { useDishesTheme } from '@/constants/Theme';
 
 type SearchResultSection = {
   title: string;
-}
+};
 
 export default function Recipes() {
   const styles = useStyles();
@@ -24,29 +36,21 @@ export default function Recipes() {
   const [searchQuery, setSearchQuery] = useState('');
   const [keyboardVisible, setKeyboardVisible] = useState(false);
 
-  const { recipes } = useRecipes();  
+  const { recipes } = useRecipes();
 
-  const titleFilteredRecipes = (
-    searchQuery
-      ? recipes.filter(
-        (recipe) => recipe.name.toLowerCase().includes(
-          searchQuery.toLowerCase().trim()
-        )
+  const titleFilteredRecipes = searchQuery
+    ? recipes.filter((recipe) =>
+        recipe.name.toLowerCase().includes(searchQuery.toLowerCase().trim()),
       )
-      : []
-  );
+    : [];
 
-  const ingredientFilteredRecipes = (
-    searchQuery
-      ? recipes.filter(
-        (recipe) => (
-          recipe.ingredients.some(
-            (ingredient) => ingredient.includes(searchQuery.toLowerCase().trim())
-          )
-        )
+  const ingredientFilteredRecipes = searchQuery
+    ? recipes.filter((recipe) =>
+        recipe.ingredients.some((ingredient) =>
+          ingredient.includes(searchQuery.toLowerCase().trim()),
+        ),
       )
-      : []
-  );
+    : [];
 
   const filteredRecipes: SectionListData<Recipe, SearchResultSection>[] = [
     {
@@ -56,8 +60,8 @@ export default function Recipes() {
     {
       title: 'Ingredient Matches',
       data: ingredientFilteredRecipes,
-    }
-  ]
+    },
+  ];
 
   Keyboard.addListener('keyboardWillShow', () => setKeyboardVisible(true));
   Keyboard.addListener('keyboardWillHide', () => setKeyboardVisible(false));
@@ -66,32 +70,33 @@ export default function Recipes() {
     setSearchQuery('');
     searchInputRef.current?.clear();
     Keyboard.dismiss();
-  }
+  };
 
-  const renderItem: ListRenderItem<Recipe> = (
-    { item: recipe }
-  ) => (
+  const renderItem: ListRenderItem<Recipe> = ({ item: recipe }) => (
     <View style={styles.renderItem}>
       <RecipeListItem recipe={recipe} />
     </View>
   );
 
-  const renderSectionHeader: SectionListProps<Recipe, SearchResultSection>['renderSectionHeader'] = (
-    ({ section }) => section.data[0]
-      ? (
-        <View style={styles.sectionHeaderContainer}>
-          <FontAwesome name='arrow-up' color='gray' size={15} />
-          <Text style={styles.sectionHeaderText}>
-            {section.title}
-          </Text>
-        </View>
-      )
-      : null
-  );
+  const renderSectionHeader: SectionListProps<
+    Recipe,
+    SearchResultSection
+  >['renderSectionHeader'] = ({ section }) =>
+    section.data[0] ? (
+      <View style={styles.sectionHeaderContainer}>
+        <FontAwesome
+          name='arrow-up'
+          color='gray'
+          size={15}
+        />
+        <Text style={styles.sectionHeaderText}>{section.title}</Text>
+      </View>
+    ) : null;
 
-  const renderSectionFooter: SectionListProps<Recipe, SearchResultSection>['renderSectionHeader'] = (
-    () => <View style={{ height: Layout.spacer }} />
-  )
+  const renderSectionFooter: SectionListProps<
+    Recipe,
+    SearchResultSection
+  >['renderSectionHeader'] = () => <View style={styles.renderSectionFooter} />;
 
   return (
     <KeyboardAvoidingView
@@ -100,7 +105,10 @@ export default function Recipes() {
     >
       <StatusBar hidden />
 
-      <Link asChild href={'/settings'}>
+      <Link
+        asChild
+        href={'/settings'}
+      >
         <FontAwesome
           style={styles.settingsButton}
           name='gears'
@@ -109,52 +117,46 @@ export default function Recipes() {
         />
       </Link>
 
-      {
-        searchQuery
-          ? (
-            <SectionList<Recipe, SearchResultSection>
-              inverted
-              // bottom becomes top because inverted={true}
-              contentInset={{ bottom: safeAreaInsets.top }}
-              style={styles.flatList}
-              contentContainerStyle={styles.flatListContentContainer}
-              // data={filteredRecipes}
-              sections={filteredRecipes}
-              keyExtractor={(r) => r.id}
-              renderItem={renderItem}
-              renderSectionHeader={renderSectionHeader}
-              showsVerticalScrollIndicator={false}
-              keyboardShouldPersistTaps='handled'
-              stickySectionHeadersEnabled={false}
-            />
-          )
-          : (
-            <FlatList<Recipe>
-              inverted
-              // bottom becomes top because inverted={true}
-              contentInset={{ bottom: safeAreaInsets.top }}
-              style={styles.flatList}
-              contentContainerStyle={styles.flatListContentContainer}
-              data={recipes}
-              keyExtractor={(r) => r.id}
-              renderItem={renderItem}
-              showsVerticalScrollIndicator={false}
-              keyboardShouldPersistTaps='handled'
-            />
-          )
-      }
-
+      {searchQuery ? (
+        <SectionList<Recipe, SearchResultSection>
+          inverted
+          // bottom becomes top because inverted={true}
+          contentInset={{ bottom: safeAreaInsets.top }}
+          style={styles.flatList}
+          contentContainerStyle={styles.flatListContentContainer}
+          // data={filteredRecipes}
+          sections={filteredRecipes}
+          keyExtractor={(r) => r.id}
+          renderItem={renderItem}
+          renderSectionHeader={renderSectionHeader}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps='handled'
+          stickySectionHeadersEnabled={false}
+        />
+      ) : (
+        <FlatList<Recipe>
+          inverted
+          // bottom becomes top because inverted={true}
+          contentInset={{ bottom: safeAreaInsets.top }}
+          style={styles.flatList}
+          contentContainerStyle={styles.flatListContentContainer}
+          data={recipes}
+          keyExtractor={(r) => r.id}
+          renderItem={renderItem}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps='handled'
+        />
+      )}
 
       <View style={styles.divider} />
 
-      <View style={[
-        styles.bottomControlsContainer,
-        keyboardVisible ? styles.searchBarContainerKeyboard : {},
-      ]}>
-
-        <View
-          style={[styles.searchBarContainer]}
-        >
+      <View
+        style={[
+          styles.bottomControlsContainer,
+          keyboardVisible ? styles.searchBarContainerKeyboard : {},
+        ]}
+      >
+        <View style={[styles.searchBarContainer]}>
           <TextInput
             autoCapitalize='none'
             ref={searchInputRef}
@@ -164,33 +166,28 @@ export default function Recipes() {
             placeholder='Search...'
           />
 
-          {
-            searchQuery && (
-              <Pressable
-                onPress={onPressClearSearch}
-              >
-                <Text>
-                  clear
-                </Text>
-              </Pressable>
-            )
-          }
+          {searchQuery && (
+            <Pressable onPress={onPressClearSearch}>
+              <Text>clear</Text>
+            </Pressable>
+          )}
         </View>
 
-        {
-          !keyboardVisible
-          && (<Link href='/new-recipe' asChild >
+        {!keyboardVisible && (
+          <Link
+            href='/new-recipe'
+            asChild
+          >
             <Button title='New' />
-          </Link>)
-        }
-
+          </Link>
+        )}
       </View>
-
     </KeyboardAvoidingView>
   );
 }
 
 const useStyles = () => {
+  const { layout } = useDishesTheme();
   const safeAreaInsets = useSafeAreaInsets();
 
   return StyleSheet.create({
@@ -202,32 +199,30 @@ const useStyles = () => {
       // shadowRadius: Layout.spacer,
       // shadowColor: 'black',
       // shadowOpacity: 0.5,
-      margin: Layout.spacer,
+      margin: layout.spacer,
     },
     flatList: {
       // flex: 1,
     },
     flatListContentContainer: {
-      paddingTop: Layout.spacer,
+      paddingTop: layout.spacer,
     },
     keyboardAvoidingView: {
       flex: 1,
     },
     sectionHeaderContainer: {
-      paddingVertical: Layout.spacer / 2,
-      paddingHorizontal: Layout.spacer,
+      paddingVertical: layout.spacer / 2,
+      paddingHorizontal: layout.spacer,
       flexDirection: 'row',
       alignItems: 'center',
-      gap: Layout.spacer / 2,
+      gap: layout.spacer / 2,
     },
     sectionHeaderText: {
       // textAlign: 'center',
       color: 'gray',
       fontSize: 20,
       fontWeight: '400',
-      fontVariant: [
-        'small-caps'
-      ],
+      fontVariant: ['small-caps'],
     },
     renderItem: {
       // flexDirection: 'row',
@@ -235,11 +230,11 @@ const useStyles = () => {
     },
     bottomControlsContainer: {
       marginBottom: safeAreaInsets.bottom,
-      padding: Layout.spacer,
-      gap: Layout.spacer,
+      padding: layout.spacer,
+      gap: layout.spacer,
     },
     searchBarContainer: {
-    // backgroundColor: 'transparent',
+      // backgroundColor: 'transparent',
 
       flexDirection: 'row',
       justifyContent: 'space-between',
@@ -254,17 +249,18 @@ const useStyles = () => {
       fontWeight: 900,
       fontStyle: 'italic',
     },
-    searchBarClearButton: {
-
-    },
+    searchBarClearButton: {},
     bottomButtonsContainer: {
       flexDirection: 'row',
       justifyContent: 'space-between',
     },
     divider: {
-      marginHorizontal: Layout.spacer,
-      height: Layout.borderWidth,
-      backgroundColor: 'grey'
-    }
+      marginHorizontal: layout.spacer,
+      height: layout.borderWidth,
+      backgroundColor: 'grey',
+    },
+    renderSectionFooter: {
+      height: layout.spacer,
+    },
   });
 };

@@ -3,11 +3,11 @@ import { Text, View } from '@/components/Themed';
 import RootStackParamList from '@/types/RootStackParamList';
 import { Link } from 'expo-router';
 import SafeAreaScrollView from '@/components/SafeAreaScrollView';
-import Layout from '@/constants/Layout';
 import useSetOptions from '@/hooks/useSetOptions';
 import { useState } from 'react';
 import { v4 as uuid } from 'react-native-uuid/dist/v4';
 import useRecipes from '@/hooks/useRecipes';
+import { useDishesTheme } from '@/constants/Theme';
 
 type Params = RootStackParamList['recipe'];
 
@@ -150,27 +150,27 @@ export default function NewRecipeScreen() {
 }
 
 const useStyles = () => {
+  const { layout } = useDishesTheme();
   return StyleSheet.create({
     keyboardAvoidingView: { flex: 1 },
     container: {
-      paddingHorizontal: Layout.spacer,
-      paddingTop: 100 + Layout.spacer,
-      gap: Layout.spacer * 2,
-
+      paddingHorizontal: layout.spacer,
+      paddingTop: 100 + layout.spacer,
+      gap: layout.spacer * 2,
     },
     recipeName: {
       fontSize: 35,
       fontWeight: 900,
     },
     section: {
-      gap: Layout.spacer,
+      gap: layout.spacer,
     },
     sectionContent: {
-      gap: Layout.spacer / 2,
+      gap: layout.spacer / 2,
     },
     ingredientRow: {
       flexDirection: 'row',
-      gap: Layout.spacer / 2,
+      gap: layout.spacer / 2,
     },
     sectionText: {
       color: 'white',
@@ -179,6 +179,6 @@ const useStyles = () => {
       color: 'white',
       fontSize: 30,
       fontWeight: 200,
-    }
+    },
   });
 };
