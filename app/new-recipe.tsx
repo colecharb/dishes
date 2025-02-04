@@ -66,10 +66,10 @@ export default function NewRecipeScreen() {
                   key={index}
                   style={styles.ingredientRow}
                 >
-                  <Text style={styles.sectionText}>•</Text>
+                  <Text>•</Text>
                   <TextInput
                     placeholder='Add ingredient...'
-                    style={[styles.sectionText, { flex: 1 }]}
+                    style={{ flex: 1 }}
                     onChangeText={(text) => setIngredient(index)(text)}
                     value={ingredient}
                   />
@@ -90,10 +90,10 @@ export default function NewRecipeScreen() {
                   key={index}
                   style={styles.ingredientRow}
                 >
-                  <Text style={styles.sectionText}>•</Text>
+                  <Text>•</Text>
                   <TextInput
                     placeholder='Add step...'
-                    style={[styles.sectionText, { flex: 1 }]}
+                    style={{ flex: 1 }}
                     onChangeText={(text) => setStep(index)(text)}
                     value={step}
                   />
@@ -148,9 +148,6 @@ const useStyles = () => {
     ingredientRow: {
       flexDirection: 'row',
       gap: layout.spacer / 2,
-    },
-    sectionText: {
-      color: 'white',
     },
     heading: {
       color: 'white',

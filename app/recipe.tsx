@@ -64,12 +64,7 @@ export default function RecipeScreen() {
           <Text style={styles.heading}>Preparation</Text>
           <View style={styles.sectionContent}>
             {recipe.method.map((step, index) => (
-              <Text
-                style={styles.sectionText}
-                key={step}
-              >
-                {`${index + 1}.  ${step}`}
-              </Text>
+              <Text key={step}>{`${index + 1}.  ${step}`}</Text>
             ))}
           </View>
         </View>
@@ -106,9 +101,6 @@ const useStyles = () => {
     },
     sectionContent: {
       gap: layout.spacer / 2,
-    },
-    sectionText: {
-      color: 'white',
     },
     heading: {
       fontSize: 30,
