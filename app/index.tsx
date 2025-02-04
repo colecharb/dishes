@@ -30,6 +30,7 @@ type SearchResultSection = {
 
 export default function Recipes() {
   const styles = useStyles();
+  const { colors } = useDishesTheme();
   const safeAreaInsets = useSafeAreaInsets();
 
   const searchInputRef = useRef<TextInput>(null);
@@ -181,7 +182,10 @@ export default function Recipes() {
               href='/new-recipe'
               asChild
             >
-              <Button title='New' />
+              <Button
+                color={colors.primary}
+                title='New'
+              />
             </Link>
           )}
         </View>
