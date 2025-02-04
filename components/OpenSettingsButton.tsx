@@ -1,7 +1,7 @@
 import { FontAwesome } from '@expo/vector-icons';
 import { Link } from 'expo-router';
 import { Pressable } from 'react-native';
-import { Text } from './Themed';
+import { Text } from 'react-native-paper';
 
 const OpenSettingsButton = () => {
   return (

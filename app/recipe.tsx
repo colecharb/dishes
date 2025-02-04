@@ -1,5 +1,6 @@
 import { Alert, Button, StyleSheet } from 'react-native';
-import { Text, View } from '@/components/Themed';
+import { View } from '@/components/Themed';
+import { Text } from 'react-native-paper';
 import RootStackParamList from '@/types/RootStackParamList';
 import { useLocalSearchParams, useNavigation } from 'expo-router';
 import SafeAreaScrollView from '@/components/SafeAreaScrollView';

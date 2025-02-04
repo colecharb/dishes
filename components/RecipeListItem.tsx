@@ -1,5 +1,5 @@
 import { Recipe } from '@/constants/Recipes';
-import { Text } from './Themed';
+import { Text } from 'react-native-paper';
 import { Pressable, StyleSheet } from 'react-native';
 import { Link } from 'expo-router';
 import { useDishesTheme } from '@/constants/Theme';

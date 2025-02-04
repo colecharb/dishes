@@ -1,5 +1,6 @@
 import { Button, KeyboardAvoidingView, StyleSheet, TextInput } from 'react-native';
-import { Text, View } from '@/components/Themed';
+import { View } from '@/components/Themed';
+import { Text } from 'react-native-paper';
 import RootStackParamList from '@/types/RootStackParamList';
 import { Link } from 'expo-router';
 import SafeAreaScrollView from '@/components/SafeAreaScrollView';
