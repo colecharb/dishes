@@ -49,33 +49,34 @@ export default function RecipeScreen() {
   }
 
   return (
-    <View style={styles.container}>
-      <SafeAreaScrollView contentContainerStyle={styles.safeAreaScrollView}>
-        <View style={styles.section}>
-          <Text style={styles.heading}>Ingredients</Text>
-          <View style={styles.sectionContent}>
-            {recipe.ingredients.map((ingredient) => (
-              <Text key={ingredient}>{ingredient}</Text>
-            ))}
-          </View>
+    <SafeAreaScrollView
+      style={styles.scrollView}
+      contentContainerStyle={styles.scrollViewContent}
+    >
+      <View style={styles.section}>
+        <Text style={styles.heading}>Ingredients</Text>
+        <View style={styles.sectionContent}>
+          {recipe.ingredients.map((ingredient) => (
+            <Text key={ingredient}>{ingredient}</Text>
+          ))}
         </View>
+      </View>
 
-        <View style={styles.section}>
-          <Text style={styles.heading}>Preparation</Text>
-          <View style={styles.sectionContent}>
-            {recipe.method.map((step, index) => (
-              <Text key={step}>{`${index + 1}.  ${step}`}</Text>
-            ))}
-          </View>
+      <View style={styles.section}>
+        <Text style={styles.heading}>Preparation</Text>
+        <View style={styles.sectionContent}>
+          {recipe.method.map((step, index) => (
+            <Text key={step}>{`${index + 1}.  ${step}`}</Text>
+          ))}
         </View>
+      </View>
 
-        <Button
-          title='Delete'
-          color='red'
-          onPress={onPressDelete}
-        />
-      </SafeAreaScrollView>
-    </View>
+      <Button
+        title='Delete'
+        color='red'
+        onPress={onPressDelete}
+      />
+    </SafeAreaScrollView>
   );
 }
 
@@ -85,12 +86,15 @@ const useStyles = () => {
     container: {
       flex: 1,
     },
-    safeAreaScrollView: {
+    scrollView: {
+      backgroundColor: colors.background,
+    },
+    scrollViewContent: {
       backgroundColor: colors.background,
       paddingHorizontal: layout.spacer,
       paddingTop: 100 + layout.spacer,
       gap: layout.spacer * 2,
-      // flex: 1,
+      flex: 1,
     },
     recipeName: {
       fontSize: 35,

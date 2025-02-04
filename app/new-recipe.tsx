@@ -40,85 +40,84 @@ export default function NewRecipeScreen() {
   const styles = useStyles();
 
   return (
-    <View style={styles.container}>
-      <KeyboardAvoidingView
-        behavior='height'
-        style={styles.keyboardAvoidingView}
+    <KeyboardAvoidingView
+      behavior='height'
+      style={styles.keyboardAvoidingView}
+    >
+      <SafeAreaScrollView
+        keyboardShouldPersistTaps='handled'
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollViewContent}
       >
-        <SafeAreaScrollView
-          keyboardShouldPersistTaps='handled'
-          contentContainerStyle={styles.safeAreaScrollView}
-        >
-          <View style={styles.section}>
-            <TextInput
-              autoFocus
-              placeholder='Recipe Name'
-              autoCapitalize='words'
-              style={styles.heading}
-              onChangeText={setRecipeName}
-            />
-          </View>
-          <View style={styles.section}>
-            <Text style={styles.heading}>Ingredients</Text>
-            <View style={styles.sectionContent}>
-              {recipeIngredients.map((ingredient, index) => (
-                <View
-                  key={index}
-                  style={styles.ingredientRow}
-                >
-                  <Text>•</Text>
-                  <TextInput
-                    placeholder='Add ingredient...'
-                    style={{ flex: 1 }}
-                    onChangeText={(text) => setIngredient(index)(text)}
-                    value={ingredient}
-                  />
-                </View>
-              ))}
-              <Button
-                title='add'
-                onPress={() => setRecipeIngredients((prev) => [...prev, ''])}
-              />
-            </View>
-          </View>
-
-          <View style={styles.section}>
-            <Text style={styles.heading}>Preparation</Text>
-            <View style={styles.sectionContent}>
-              {recipeMethod.map((step, index) => (
-                <View
-                  key={index}
-                  style={styles.ingredientRow}
-                >
-                  <Text>•</Text>
-                  <TextInput
-                    placeholder='Add step...'
-                    style={{ flex: 1 }}
-                    onChangeText={(text) => setStep(index)(text)}
-                    value={step}
-                  />
-                </View>
-              ))}
-              <Button
-                title='add'
-                onPress={() => setRecipeMethod((prev) => [...prev, ''])}
-              />
-            </View>
-          </View>
-
-          <Link
-            asChild
-            href={'..'}
-            replace
-          >
+        <View style={styles.section}>
+          <TextInput
+            autoFocus
+            placeholder='Recipe Name'
+            autoCapitalize='words'
+            style={styles.heading}
+            onChangeText={setRecipeName}
+          />
+        </View>
+        <View style={styles.section}>
+          <Text style={styles.heading}>Ingredients</Text>
+          <View style={styles.sectionContent}>
+            {recipeIngredients.map((ingredient, index) => (
+              <View
+                key={index}
+                style={styles.ingredientRow}
+              >
+                <Text>•</Text>
+                <TextInput
+                  placeholder='Add ingredient...'
+                  style={{ flex: 1 }}
+                  onChangeText={(text) => setIngredient(index)(text)}
+                  value={ingredient}
+                />
+              </View>
+            ))}
             <Button
-              title='Save'
-              onPress={onPressSave}
+              title='add'
+              onPress={() => setRecipeIngredients((prev) => [...prev, ''])}
             />
-          </Link>
-        </SafeAreaScrollView>
-      </KeyboardAvoidingView>
-    </View>
+          </View>
+        </View>
+
+        <View style={styles.section}>
+          <Text style={styles.heading}>Preparation</Text>
+          <View style={styles.sectionContent}>
+            {recipeMethod.map((step, index) => (
+              <View
+                key={index}
+                style={styles.ingredientRow}
+              >
+                <Text>•</Text>
+                <TextInput
+                  placeholder='Add step...'
+                  style={{ flex: 1 }}
+                  onChangeText={(text) => setStep(index)(text)}
+                  value={step}
+                />
+              </View>
+            ))}
+            <Button
+              title='add'
+              onPress={() => setRecipeMethod((prev) => [...prev, ''])}
+            />
+          </View>
+        </View>
+
+        <Link
+          asChild
+          href={'..'}
+          replace
+        >
+          <Button
+            title='Save'
+            onPress={onPressSave}
+          />
+        </Link>
+      </SafeAreaScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
@@ -129,7 +128,10 @@ const useStyles = () => {
       flex: 1,
     },
     keyboardAvoidingView: { flex: 1 },
-    safeAreaScrollView: {
+    scrollView: {
+      backgroundColor: colors.background,
+    },
+    scrollViewContent: {
       paddingHorizontal: layout.spacer,
       paddingTop: 100 + layout.spacer,
       gap: layout.spacer * 2,
