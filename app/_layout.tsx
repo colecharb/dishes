@@ -75,20 +75,8 @@ function RootLayoutNav() {
           title: 'Recipes',
         }}
       />
-      <Stack.Screen
-        name='recipe'
-        options={
-          {
-            // headerShown: true,
-          }
-        }
-      />
-      <Stack.Screen
-        name='new-recipe'
-        options={{
-          headerShown: true,
-        }}
-      />
+      <Stack.Screen name='recipe' />
+      <Stack.Screen name='new-recipe' />
       <Stack.Screen
         name='settings'
         options={{
