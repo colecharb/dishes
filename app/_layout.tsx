@@ -66,6 +66,7 @@ function RootLayoutNav() {
         headerStyle: { backgroundColor: colors.background },
         headerTintColor: colors.primary,
         headerLargeTitleStyle: { fontWeight: '900', color: colors.onBackground },
+        headerTitleStyle: { fontWeight: '900', color: colors.onBackground },
       }}
     >
       <Stack.Screen
