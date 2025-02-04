@@ -100,95 +100,98 @@ export default function Recipes() {
   >['renderSectionHeader'] = () => <View style={styles.renderSectionFooter} />;
 
   return (
-    <KeyboardAvoidingView
-      style={styles.keyboardAvoidingView}
-      behavior='height'
-    >
-      <StatusBar hidden />
-
-      <Link
-        asChild
-        href={'/settings'}
+    <View style={{ flex: 1 }}>
+      <KeyboardAvoidingView
+        style={styles.keyboardAvoidingView}
+        behavior='height'
       >
-        <FontAwesome
-          style={styles.settingsButton}
-          name='gears'
-          size={25}
-          color='white'
-        />
-      </Link>
+        <StatusBar hidden />
 
-      {searchQuery ? (
-        <SectionList<Recipe, SearchResultSection>
-          inverted
-          // bottom becomes top because inverted={true}
-          contentInset={{ bottom: safeAreaInsets.top }}
-          style={styles.flatList}
-          contentContainerStyle={styles.flatListContentContainer}
-          // data={filteredRecipes}
-          sections={filteredRecipes}
-          keyExtractor={(r) => r.id}
-          renderItem={renderItem}
-          renderSectionHeader={renderSectionHeader}
-          showsVerticalScrollIndicator={false}
-          keyboardShouldPersistTaps='handled'
-          stickySectionHeadersEnabled={false}
-        />
-      ) : (
-        <FlatList<Recipe>
-          inverted
-          // bottom becomes top because inverted={true}
-          contentInset={{ bottom: safeAreaInsets.top }}
-          style={styles.flatList}
-          contentContainerStyle={styles.flatListContentContainer}
-          data={recipes}
-          keyExtractor={(r) => r.id}
-          renderItem={renderItem}
-          showsVerticalScrollIndicator={false}
-          keyboardShouldPersistTaps='handled'
-        />
-      )}
-
-      <View style={styles.divider} />
-
-      <View
-        style={[
-          styles.bottomControlsContainer,
-          keyboardVisible ? styles.searchBarContainerKeyboard : {},
-        ]}
-      >
-        <View style={[styles.searchBarContainer]}>
-          <TextInput
-            autoCapitalize='none'
-            ref={searchInputRef}
-            selectionColor={'white'}
-            style={styles.searchBarText}
-            onChangeText={(text) => setSearchQuery(text)}
-            placeholder='Search...'
+        <Link
+          asChild
+          href={'/settings'}
+        >
+          <FontAwesome
+            style={styles.settingsButton}
+            name='gears'
+            size={25}
+            color='white'
           />
+        </Link>
 
-          {searchQuery && (
-            <Pressable onPress={onPressClearSearch}>
-              <Text>clear</Text>
-            </Pressable>
+        {searchQuery ? (
+          <SectionList<Recipe, SearchResultSection>
+            inverted
+            // bottom becomes top because inverted={true}
+            contentInset={{ bottom: safeAreaInsets.top }}
+            style={styles.flatList}
+            contentContainerStyle={styles.flatListContentContainer}
+            // data={filteredRecipes}
+            sections={filteredRecipes}
+            keyExtractor={(r) => r.id}
+            renderItem={renderItem}
+            renderSectionHeader={renderSectionHeader}
+            showsVerticalScrollIndicator={false}
+            keyboardShouldPersistTaps='handled'
+            stickySectionHeadersEnabled={false}
+          />
+        ) : (
+          <FlatList<Recipe>
+            inverted
+            // bottom becomes top because inverted={true}
+            contentInset={{ bottom: safeAreaInsets.top }}
+            style={styles.flatList}
+            contentContainerStyle={styles.flatListContentContainer}
+            data={recipes}
+            keyExtractor={(r) => r.id}
+            renderItem={renderItem}
+            showsVerticalScrollIndicator={false}
+            keyboardShouldPersistTaps='handled'
+          />
+        )}
+
+        <View style={styles.divider} />
+
+        <View
+          style={[
+            styles.bottomControlsContainer,
+            keyboardVisible ? styles.searchBarContainerKeyboard : {},
+          ]}
+        >
+          <View style={[styles.searchBarContainer]}>
+            <TextInput
+              autoCapitalize='none'
+              ref={searchInputRef}
+              selectionColor={'white'}
+              style={styles.searchBarText}
+              onChangeText={(text) => setSearchQuery(text)}
+              placeholder='Search...'
+              returnKeyType='done'
+            />
+
+            {searchQuery && (
+              <Pressable onPress={onPressClearSearch}>
+                <Text>clear</Text>
+              </Pressable>
+            )}
+          </View>
+
+          {!keyboardVisible && (
+            <Link
+              href='/new-recipe'
+              asChild
+            >
+              <Button title='New' />
+            </Link>
           )}
         </View>
-
-        {!keyboardVisible && (
-          <Link
-            href='/new-recipe'
-            asChild
-          >
-            <Button title='New' />
-          </Link>
-        )}
-      </View>
-    </KeyboardAvoidingView>
+      </KeyboardAvoidingView>
+    </View>
   );
 }
 
 const useStyles = () => {
-  const { layout } = useDishesTheme();
+  const { layout, colors } = useDishesTheme();
   const safeAreaInsets = useSafeAreaInsets();
 
   return StyleSheet.create({
@@ -210,6 +213,7 @@ const useStyles = () => {
     },
     keyboardAvoidingView: {
       flex: 1,
+      backgroundColor: colors.background,
     },
     sectionHeaderContainer: {
       paddingVertical: layout.spacer / 2,
