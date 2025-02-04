@@ -15,18 +15,6 @@ type ThemeProps = {
 export type TextProps = ThemeProps & DefaultText['props'];
 export type ViewProps = ThemeProps & DefaultView['props'];
 
-// export function Text(props: TextProps) {
-//   const { colors } = useDishesTheme();
-//   const { style, lightColor, darkColor, ...otherProps } = props;
-
-//   return (
-//     <DefaultText
-//       style={[{ color: colors.primary, fontSize: 18 }, style]}
-//       {...otherProps}
-//     />
-//   );
-// }
-
 export function View(props: ViewProps) {
   const { colors } = useDishesTheme();
 
