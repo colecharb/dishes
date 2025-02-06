@@ -1,9 +1,10 @@
-import { Button, StyleSheet } from 'react-native';
+import { Image, StyleSheet } from 'react-native';
 
 import { View } from '@/components/Themed';
 import { RECIPES } from '@/constants/Recipes';
 import RecipeStorage from '@/helpers/RecipeStorage';
 import { useDishesTheme } from '@/constants/Theme';
+import { Button } from 'react-native-paper';
 
 export default function ModalScreen() {
   const styles = useStyles();
@@ -13,10 +14,17 @@ export default function ModalScreen() {
 
   return (
     <View style={styles.container}>
-      <Button
-        title='Add Dummy Recipes'
-        onPress={onPressResetRecipes}
+      {/* add image 'assets/images/splash-icon.png */}
+      <Image
+        source={require('../assets/images/splash-icon.png')}
+        style={{ width: 100, height: 100 }}
       />
+      <Button
+        mode='outlined'
+        onPress={onPressResetRecipes}
+      >
+        Add Dummy Recipes
+      </Button>
     </View>
   );
 }
