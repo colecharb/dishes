@@ -4,17 +4,27 @@
 //   DefaultTheme,
 // } from '@react-navigation/native';
 import { MD3DarkTheme, MD3LightTheme, useTheme } from 'react-native-paper';
+import { MD3Colors } from 'react-native-paper/lib/typescript/types';
 
 const Layout = {
   spacer: 16,
   borderWidth: 1,
 } as const;
 
+// Colors present in both themes
+const commonColors: Partial<MD3Colors> = {
+  // egg yolk primary color
+  primary: '#FDB955',
+};
+
 const dishesTheme = {
   ...MD3DarkTheme,
   layout: Layout,
   colors: {
     ...MD3DarkTheme.colors,
+    // black background
+    background: '#000000',
+    ...commonColors,
   },
   fonts: {
     ...MD3DarkTheme.fonts,
@@ -27,6 +37,7 @@ const lightTheme: DishesTheme = {
   ...dishesTheme,
   colors: {
     ...MD3LightTheme.colors,
+    ...commonColors,
   },
   fonts: {
     ...MD3LightTheme.fonts,
