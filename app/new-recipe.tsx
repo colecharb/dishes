@@ -152,7 +152,7 @@ const useStyles = () => {
       gap: layout.spacer / 2,
     },
     heading: {
-      color: 'white',
+      color: colors.onBackground,
       fontSize: 30,
       fontWeight: 200,
     },
