@@ -12,7 +12,7 @@ import { useDishesTheme } from '@/constants/Theme';
 type Params = RootStackParamList['recipe'];
 
 export default function RecipeScreen() {
-  const { recipeId } = useLocalSearchParams<RootStackParamList['recipe']>();
+  const { recipeId } = useLocalSearchParams<Params>();
   const { removeRecipe } = useRecipes();
   const recipe = useRecipe(recipeId);
 
