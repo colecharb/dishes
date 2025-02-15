@@ -1,22 +1,23 @@
 import { Recipe } from '@/constants/Recipes';
-import { Text, View } from './Themed';
-import { ListRenderItem, ListRenderItemInfo, Pressable, StyleSheet } from 'react-native';
-import Layout from '@/constants/Layout';
+import { Text } from 'react-native-paper';
+import { Pressable, StyleSheet } from 'react-native';
 import { Link } from 'expo-router';
+import { useDishesTheme } from '@/constants/Theme';
 
 type RecipeListItemProps = {
   recipe: Recipe;
 };
 
 const useStyles = () => {
+  const { layout } = useDishesTheme();
   return StyleSheet.create({
     container: {
-      padding: Layout.spacer,
+      padding: layout.spacer,
     },
     recipeName: {
       fontSize: 25,
       fontWeight: 900,
-    }
+    },
   });
 };
 

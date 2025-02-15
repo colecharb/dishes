@@ -1,12 +1,14 @@
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+// import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
-import { useColorScheme } from '@/components/useColorScheme';
-import { useThemeColor } from '@/components/Themed';
+// import { useThemeColor } from '@/components/Themed';
+import { PaperProvider } from 'react-native-paper';
+import { dishesTheme, lightTheme, useDishesTheme } from '@/constants/Theme';
+import useColorScheme from '@/hooks/useColorScheme';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -27,6 +29,8 @@ export default function RootLayout() {
     ...FontAwesome.font,
   });
 
+  const colorScheme = useColorScheme();
+
   // Expo Router uses Error Boundaries to catch errors in the navigation tree.
   useEffect(() => {
     if (error) throw error;
@@ -42,63 +46,45 @@ export default function RootLayout() {
     return null;
   }
 
-  return <RootLayoutNav />;
+  const theme = colorScheme === 'dark' ? dishesTheme : lightTheme;
+
+  return (
+    <PaperProvider theme={theme}>
+      <RootLayoutNav />
+    </PaperProvider>
+  );
 }
 
 function RootLayoutNav() {
-  const colorScheme = useColorScheme();
+  const { colors } = useDishesTheme();
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack
-        screenOptions={{
-          headerLargeTitle: true,
-          headerShadowVisible: false,
-          headerStyle: { backgroundColor: useThemeColor({}, 'background') },
-          headerLargeTitleStyle: { fontWeight: '900' },
+    <Stack
+      screenOptions={{
+        headerLargeTitle: true,
+        headerShadowVisible: false,
+        headerStyle: { backgroundColor: colors.background },
+        headerTintColor: colors.primary,
+        headerLargeTitleStyle: { fontWeight: '900', color: colors.onBackground },
+        headerTitleStyle: { fontWeight: '900', color: colors.onBackground },
+      }}
+    >
+      <Stack.Screen
+        name='index'
+        options={{
+          headerShown: false,
+          title: 'Recipes',
         }}
-      >
-        <Stack.Screen
-          name='index'
-          options={{
-            headerShown: false,
-            title: 'Recipes'
-            // headerRight: () => (
-            //   <Link href="/SettingsModal" asChild>
-            //     <Pressable>
-            //       {({ pressed }) => (
-            //         <FontAwesome
-            //           name="info-circle"
-            //           size={25}
-            //           color={Colors[colorScheme ?? 'light'].text}
-            //           style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
-            //         />
-            //       )}
-            //     </Pressable>
-            //   </Link>
-            // ),
-          }}
-        />
-        <Stack.Screen
-          name="recipe"
-          options={{
-            headerShown: true,
-          }}
-        />
-        <Stack.Screen
-          name="new-recipe"
-          options={{
-            headerShown: true,
-          }}
-        />
-        <Stack.Screen
-          name="settings"
-          options={{
-            presentation: 'modal',
-            title: 'Settings',
-          }}
-        />
-      </Stack>
-    </ThemeProvider>
+      />
+      <Stack.Screen name='recipe' />
+      <Stack.Screen name='new-recipe' />
+      <Stack.Screen
+        name='settings'
+        options={{
+          presentation: 'modal',
+          title: 'Settings',
+        }}
+      />
+    </Stack>
   );
 }

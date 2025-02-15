@@ -1,7 +1,6 @@
-import Layout from '@/constants/Layout';
-import { Dispatch, SetStateAction } from 'react';
 import { StyleSheet, TextInput } from 'react-native';
-import { useThemeColor, View } from './Themed';
+import { View } from './Themed';
+import { useDishesTheme } from '@/constants/Theme';
 
 type Props = {
   onChangeText: (text: string) => void;
@@ -21,13 +20,14 @@ const SearchBar = ({ onChangeText }: Props) => {
 };
 
 const useStyles = () => {
+  const { colors } = useDishesTheme();
   return StyleSheet.create({
     container: {
       height: 50,
     },
     text: {
-      color: useThemeColor({}, 'text')
-    }
+      color: colors.primary,
+    },
   });
 };
 

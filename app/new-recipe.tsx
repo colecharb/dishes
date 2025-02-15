@@ -1,13 +1,14 @@
 import { Button, KeyboardAvoidingView, StyleSheet, TextInput } from 'react-native';
-import { Text, View } from '@/components/Themed';
+import { View } from '@/components/Themed';
+import { Text } from 'react-native-paper';
 import RootStackParamList from '@/types/RootStackParamList';
 import { Link } from 'expo-router';
 import SafeAreaScrollView from '@/components/SafeAreaScrollView';
-import Layout from '@/constants/Layout';
 import useSetOptions from '@/hooks/useSetOptions';
 import { useState } from 'react';
 import { v4 as uuid } from 'react-native-uuid/dist/v4';
 import useRecipes from '@/hooks/useRecipes';
+import { useDishesTheme } from '@/constants/Theme';
 
 type Params = RootStackParamList['recipe'];
 
@@ -18,40 +19,23 @@ export default function NewRecipeScreen() {
   const [recipeIngredients, setRecipeIngredients] = useState<string[]>(['']);
   const [recipeMethod, setRecipeMethod] = useState<string[]>(['']);
 
-  const setIngredient = (index: number) => (
-    (ingredient: string) => {
-      setRecipeIngredients(
-        (prev) => ([
-          ...prev.slice(0, index),
-          ingredient,
-          ...prev.slice(index + 1),
-        ])
-      );
-    }
-  );
+  const setIngredient = (index: number) => (ingredient: string) => {
+    setRecipeIngredients((prev) => [...prev.slice(0, index), ingredient, ...prev.slice(index + 1)]);
+  };
 
-  const setStep = (index: number) => (
-    (step: string) => {
-      setRecipeMethod(
-        (prev) => ([
-          ...prev.slice(0, index),
-          step,
-          ...prev.slice(index + 1),
-        ])
-      );
-    }
-  );
+  const setStep = (index: number) => (step: string) => {
+    setRecipeMethod((prev) => [...prev.slice(0, index), step, ...prev.slice(index + 1)]);
+  };
 
   useSetOptions({ title: recipeName });
 
-  const onPressSave = () => (
+  const onPressSave = () =>
     saveRecipe({
       id: uuid(),
       name: recipeName,
       ingredients: recipeIngredients,
       method: recipeMethod,
-    })
-  );
+    });
 
   const styles = useStyles();
 
@@ -62,11 +46,12 @@ export default function NewRecipeScreen() {
     >
       <SafeAreaScrollView
         keyboardShouldPersistTaps='handled'
-        contentContainerStyle={styles.container}
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollViewContent}
       >
-
         <View style={styles.section}>
           <TextInput
+            autoFocus
             placeholder='Recipe Name'
             autoCapitalize='words'
             style={styles.heading}
@@ -74,30 +59,22 @@ export default function NewRecipeScreen() {
           />
         </View>
         <View style={styles.section}>
-          <Text style={styles.heading}>
-            Ingredients
-          </Text>
+          <Text style={styles.heading}>Ingredients</Text>
           <View style={styles.sectionContent}>
-            {
-              recipeIngredients.map(
-                (ingredient, index) => (
-                  <View
-                    key={index}
-                    style={styles.ingredientRow}
-                  >
-                    <Text style={styles.sectionText}>
-                      •
-                    </Text>
-                    <TextInput
-                      placeholder='Add ingredient...'
-                      style={[styles.sectionText, { flex: 1 }]}
-                      onChangeText={(text) => setIngredient(index)(text)}
-                      value={ingredient}
-                    />
-                  </View>
-                )
-              )
-            }
+            {recipeIngredients.map((ingredient, index) => (
+              <View
+                key={index}
+                style={styles.ingredientRow}
+              >
+                <Text>•</Text>
+                <TextInput
+                  placeholder='Add ingredient...'
+                  style={{ flex: 1 }}
+                  onChangeText={(text) => setIngredient(index)(text)}
+                  value={ingredient}
+                />
+              </View>
+            ))}
             <Button
               title='add'
               onPress={() => setRecipeIngredients((prev) => [...prev, ''])}
@@ -106,30 +83,22 @@ export default function NewRecipeScreen() {
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.heading}>
-            Preparation
-          </Text>
+          <Text style={styles.heading}>Preparation</Text>
           <View style={styles.sectionContent}>
-            {
-              recipeMethod.map(
-                (step, index) => (
-                  <View
-                    key={index}
-                    style={styles.ingredientRow}
-                  >
-                    <Text style={styles.sectionText}>
-                      •
-                    </Text>
-                    <TextInput
-                      placeholder='Add step...'
-                      style={[styles.sectionText, { flex: 1 }]}
-                      onChangeText={(text) => setStep(index)(text)}
-                      value={step}
-                    />
-                  </View>
-                )
-              )
-            }
+            {recipeMethod.map((step, index) => (
+              <View
+                key={index}
+                style={styles.ingredientRow}
+              >
+                <Text>•</Text>
+                <TextInput
+                  placeholder='Add step...'
+                  style={{ flex: 1 }}
+                  onChangeText={(text) => setStep(index)(text)}
+                  value={step}
+                />
+              </View>
+            ))}
             <Button
               title='add'
               onPress={() => setRecipeMethod((prev) => [...prev, ''])}
@@ -137,48 +106,55 @@ export default function NewRecipeScreen() {
           </View>
         </View>
 
-        <Link asChild href={'..'} replace>
+        <Link
+          asChild
+          href={'..'}
+          replace
+        >
           <Button
             title='Save'
             onPress={onPressSave}
           />
         </Link>
-
       </SafeAreaScrollView>
     </KeyboardAvoidingView>
   );
 }
 
 const useStyles = () => {
+  const { layout, colors } = useDishesTheme();
   return StyleSheet.create({
-    keyboardAvoidingView: { flex: 1 },
     container: {
-      paddingHorizontal: Layout.spacer,
-      paddingTop: 100 + Layout.spacer,
-      gap: Layout.spacer * 2,
-
+      flex: 1,
+    },
+    keyboardAvoidingView: { flex: 1 },
+    scrollView: {
+      backgroundColor: colors.background,
+    },
+    scrollViewContent: {
+      paddingHorizontal: layout.spacer,
+      paddingTop: 100 + layout.spacer,
+      gap: layout.spacer * 2,
+      backgroundColor: colors.background,
     },
     recipeName: {
       fontSize: 35,
       fontWeight: 900,
     },
     section: {
-      gap: Layout.spacer,
+      gap: layout.spacer,
     },
     sectionContent: {
-      gap: Layout.spacer / 2,
+      gap: layout.spacer / 2,
     },
     ingredientRow: {
       flexDirection: 'row',
-      gap: Layout.spacer / 2,
-    },
-    sectionText: {
-      color: 'white',
+      gap: layout.spacer / 2,
     },
     heading: {
-      color: 'white',
+      color: colors.onBackground,
       fontSize: 30,
       fontWeight: 200,
-    }
+    },
   });
 };

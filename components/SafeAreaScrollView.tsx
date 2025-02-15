@@ -1,10 +1,7 @@
 import { ScrollView, ScrollViewProps, StyleSheet } from 'react-native';
-import { useHeaderHeight } from '@react-navigation/elements';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-const SafeAreaScrollView = (
-  props: ScrollViewProps
-) => {
+const SafeAreaScrollView = (props: ScrollViewProps) => {
   const { children, ...spreadProps } = props;
 
   // Hooks //
