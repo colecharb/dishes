@@ -84,7 +84,7 @@ function RootLayoutNav() {
         name='edit-recipe'
         options={{
           presentation: 'modal',
-          title: 'Edit Recipe',
+          title: 'Editing Recipe:',
           // headerShown: false,
         }}
       />
