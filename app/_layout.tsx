@@ -84,8 +84,6 @@ function RootLayoutNav() {
         name='edit-recipe'
         options={{
           presentation: 'modal',
-          title: 'Editing Recipe:',
-          // headerShown: false,
         }}
       />
       <Stack.Screen

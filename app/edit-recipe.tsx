@@ -119,7 +119,7 @@ export default function EditRecipeScreen() {
   );
 
   useSetOptions({
-    // title: `Editing: ${recipeName}`,
+    title: `${isNewRecipe ? 'New' : 'Editing'} Recipe:`,
     headerLeft: CancelButton,
     headerRight: SaveButton,
   });
