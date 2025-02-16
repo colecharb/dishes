@@ -1,16 +1,25 @@
-import { Recipe } from '@/constants/Recipes';
-import RecipeStorage from '@/helpers/RecipeStorage';
-import { useState, useEffect } from 'react';
+// import { Recipe } from '@/constants/Recipes';
+// import RecipeStorage from '@/helpers/RecipeStorage';
+// import { useState, useEffect, useCallback } from 'react';
+import useRecipes from './useRecipes';
 
 const useRecipe = (recipeId: string) => {
-  const [recipe, setRecipe] = useState<Recipe | null>();
+  const { recipes } = useRecipes();
+  const recipe = recipes.find((r) => r.id === recipeId);
+  // const [recipe, setRecipe] = useState<Recipe | null>();
 
-  useEffect(() => {
-    RecipeStorage.get(recipeId)
-      .then((recipe) => setRecipe(recipe));
-  }, [recipeId]);
+  // const loadRecipe = useCallback(
+  //   () => RecipeStorage.get(recipeId).then((recipe) => setRecipe(recipe)),
+  //   [recipeId],
+  // );
 
-  return recipe;
+  // useEffect(() => {
+  //   loadRecipe();
+  // }, [loadRecipe]);
+
+  // const reloadRecipe = loadRecipe;
+
+  return [recipe];
 };
 
 export default useRecipe;
