@@ -61,11 +61,14 @@ function RootLayoutNav() {
   return (
     <Stack
       screenOptions={{
-        headerLargeTitle: true,
+        // headerLargeTitle: true,
         headerShadowVisible: false,
         headerStyle: { backgroundColor: colors.background },
         headerTintColor: colors.primary,
-        headerLargeTitleStyle: { fontWeight: '900', color: colors.onBackground },
+        // headerLargeTitleStyle: {
+        //   fontWeight: '900',
+        //   color: colors.onBackground,
+        // },
         headerTitleStyle: { fontWeight: '900', color: colors.onBackground },
       }}
     >
@@ -77,7 +80,14 @@ function RootLayoutNav() {
         }}
       />
       <Stack.Screen name='recipe' />
-      <Stack.Screen name='new-recipe' />
+      <Stack.Screen
+        name='edit-recipe'
+        options={{
+          presentation: 'modal',
+          title: 'Edit Recipe',
+          // headerShown: false,
+        }}
+      />
       <Stack.Screen
         name='settings'
         options={{
