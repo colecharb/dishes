@@ -1,41 +1,122 @@
-import { Button, KeyboardAvoidingView, StyleSheet, TextInput } from 'react-native';
+import {
+  Button,
+  KeyboardAvoidingView,
+  StyleSheet,
+  TextInput,
+} from 'react-native';
 import { View } from '@/components/Themed';
 import { Text } from 'react-native-paper';
 import RootStackParamList from '@/types/RootStackParamList';
-import { Link } from 'expo-router';
+import { Link, useNavigation } from 'expo-router';
 import SafeAreaScrollView from '@/components/SafeAreaScrollView';
 import useSetOptions from '@/hooks/useSetOptions';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { v4 as uuid } from 'react-native-uuid/dist/v4';
 import useRecipes from '@/hooks/useRecipes';
 import { useDishesTheme } from '@/constants/Theme';
+import { useLocalSearchParams } from 'expo-router';
+import { Alert } from 'react-native';
+import { NEW_RECIPE_ID } from '@/constants/Recipes';
+import useRecipe from '@/hooks/useRecipe';
+import { NavigationProp } from '@react-navigation/native';
 
-type Params = RootStackParamList['recipe'];
+type Params = RootStackParamList['edit-recipe'];
 
-export default function NewRecipeScreen() {
-  const { saveRecipe } = useRecipes();
+export default function EditRecipeScreen() {
+  const { recipeId } = useLocalSearchParams<Params>();
+  const isNewRecipe = recipeId === NEW_RECIPE_ID;
+
+  const { saveRecipe, deleteRecipe } = useRecipes();
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
   const [recipeName, setRecipeName] = useState<string>('');
   const [recipeIngredients, setRecipeIngredients] = useState<string[]>(['']);
   const [recipeMethod, setRecipeMethod] = useState<string[]>(['']);
 
+  const [recipe] = useRecipe(recipeId);
+
+  useEffect(() => {
+    setRecipeName((prev) => recipe?.name ?? prev);
+    setRecipeIngredients((prev) => recipe?.ingredients ?? prev);
+    setRecipeMethod((prev) => recipe?.method ?? prev);
+  }, [recipe]);
+
   const setIngredient = (index: number) => (ingredient: string) => {
-    setRecipeIngredients((prev) => [...prev.slice(0, index), ingredient, ...prev.slice(index + 1)]);
+    setRecipeIngredients((prev) => [
+      ...prev.slice(0, index),
+      ingredient,
+      ...prev.slice(index + 1),
+    ]);
   };
 
   const setStep = (index: number) => (step: string) => {
-    setRecipeMethod((prev) => [...prev.slice(0, index), step, ...prev.slice(index + 1)]);
+    setRecipeMethod((prev) => [
+      ...prev.slice(0, index),
+      step,
+      ...prev.slice(index + 1),
+    ]);
   };
 
-  useSetOptions({ title: recipeName });
-
-  const onPressSave = () =>
+  const updateRecipe = () =>
+    saveRecipe({
+      id: recipeId,
+      name: recipeName,
+      ingredients: recipeIngredients,
+      method: recipeMethod,
+    });
+  const createRecipe = () =>
     saveRecipe({
       id: uuid(),
       name: recipeName,
       ingredients: recipeIngredients,
       method: recipeMethod,
     });
+  const deleteAndGoBack = () => {
+    deleteRecipe(recipeId).then(() => {
+      navigation.goBack();
+      navigation.navigate('index');
+    });
+  };
+
+  const onPressDelete = () => {
+    Alert.alert(
+      'Deleting Recipe',
+      'Are you sure you want to delete this recipe?',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: deleteAndGoBack,
+        },
+      ],
+    );
+  };
+
+  const onPressSaveRecipe = isNewRecipe
+    ? () => createRecipe()
+    : () => updateRecipe();
+
+  const SaveButton = () => (
+    <Link
+      asChild
+      href={'..'}
+      replace
+    >
+      <Button
+        title='Save'
+        onPress={onPressSaveRecipe}
+      />
+    </Link>
+  );
+
+  useSetOptions({
+    title: `Editing: ${recipeName}`,
+    headerRight: SaveButton,
+  });
 
   const styles = useStyles();
 
@@ -51,11 +132,15 @@ export default function NewRecipeScreen() {
       >
         <View style={styles.section}>
           <TextInput
-            autoFocus
+            autoFocus={isNewRecipe}
             placeholder='Recipe Name'
             autoCapitalize='words'
-            style={styles.heading}
+            style={styles.recipeName}
             onChangeText={setRecipeName}
+            value={recipeName}
+            multiline
+            returnKeyType='done'
+            scrollEnabled={false}
           />
         </View>
         <View style={styles.section}>
@@ -66,12 +151,14 @@ export default function NewRecipeScreen() {
                 key={index}
                 style={styles.ingredientRow}
               >
-                <Text>•</Text>
                 <TextInput
+                  multiline
+                  scrollEnabled={false}
                   placeholder='Add ingredient...'
-                  style={{ flex: 1 }}
+                  style={styles.textInput}
                   onChangeText={(text) => setIngredient(index)(text)}
                   value={ingredient}
+                  returnKeyType='done'
                 />
               </View>
             ))}
@@ -90,12 +177,15 @@ export default function NewRecipeScreen() {
                 key={index}
                 style={styles.ingredientRow}
               >
-                <Text>•</Text>
+                <Text>{`${index + 1}.`}</Text>
                 <TextInput
+                  multiline
+                  scrollEnabled={false}
                   placeholder='Add step...'
-                  style={{ flex: 1 }}
+                  style={styles.textInput}
                   onChangeText={(text) => setStep(index)(text)}
                   value={step}
+                  returnKeyType='done'
                 />
               </View>
             ))}
@@ -106,16 +196,13 @@ export default function NewRecipeScreen() {
           </View>
         </View>
 
-        <Link
-          asChild
-          href={'..'}
-          replace
-        >
+        {!isNewRecipe && (
           <Button
-            title='Save'
-            onPress={onPressSave}
+            title='Delete'
+            color='red'
+            onPress={onPressDelete}
           />
-        </Link>
+        )}
       </SafeAreaScrollView>
     </KeyboardAvoidingView>
   );
@@ -127,17 +214,20 @@ const useStyles = () => {
     container: {
       flex: 1,
     },
-    keyboardAvoidingView: { flex: 1 },
+    keyboardAvoidingView: {
+      flex: 1,
+    },
     scrollView: {
+      flex: 1,
       backgroundColor: colors.background,
     },
     scrollViewContent: {
       paddingHorizontal: layout.spacer,
-      paddingTop: 100 + layout.spacer,
       gap: layout.spacer * 2,
       backgroundColor: colors.background,
     },
     recipeName: {
+      color: colors.onBackground,
       fontSize: 35,
       fontWeight: 900,
     },
@@ -150,11 +240,16 @@ const useStyles = () => {
     ingredientRow: {
       flexDirection: 'row',
       gap: layout.spacer / 2,
+      alignItems: 'center',
     },
     heading: {
       color: colors.onBackground,
       fontSize: 30,
       fontWeight: 200,
+    },
+    textInput: {
+      flex: 1,
+      color: colors.onBackground,
     },
   });
 };
