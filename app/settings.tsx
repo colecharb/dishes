@@ -6,12 +6,16 @@ import RecipeStorage from '@/helpers/RecipeStorage';
 import { useDishesTheme } from '@/constants/Theme';
 import { Button } from 'react-native-paper';
 import useRecipes from '@/hooks/useRecipes';
+import { useNavigation } from 'expo-router';
 
 export default function ModalScreen() {
   const { reloadRecipes } = useRecipes();
+  const navigation = useNavigation();
   const styles = useStyles();
   const onPressResetRecipes = () => {
-    RecipeStorage.saveMultiple(RECIPES).then(reloadRecipes);
+    RecipeStorage.saveMultiple(RECIPES)
+      .then(reloadRecipes)
+      .then(navigation.goBack);
   };
   const onPressLogRecipes = () => {
     RecipeStorage.getAll().then((recipes) => {
