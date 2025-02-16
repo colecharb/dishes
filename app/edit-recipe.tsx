@@ -1,11 +1,11 @@
 import {
-  Button,
+  Image,
   KeyboardAvoidingView,
   StyleSheet,
   TextInput,
 } from 'react-native';
 import { View } from '@/components/Themed';
-import { Text } from 'react-native-paper';
+import { Button, Text } from 'react-native-paper';
 import RootStackParamList from '@/types/RootStackParamList';
 import { Link, useNavigation } from 'expo-router';
 import SafeAreaScrollView from '@/components/SafeAreaScrollView';
@@ -34,6 +34,8 @@ export default function EditRecipeScreen() {
   const [recipeMethod, setRecipeMethod] = useState<string[]>(['']);
 
   const [recipe] = useRecipe(recipeId);
+
+  const { colors } = useDishesTheme();
 
   useEffect(() => {
     setRecipeName((prev) => recipe?.name ?? prev);
@@ -100,21 +102,25 @@ export default function EditRecipeScreen() {
     ? () => createRecipe()
     : () => updateRecipe();
 
+  const CancelButton = () => (
+    <Link href='..'>
+      <Button textColor={colors.secondary}>Cancel</Button>
+    </Link>
+  );
+
   const SaveButton = () => (
     <Link
       asChild
       href={'..'}
       replace
     >
-      <Button
-        title='Save'
-        onPress={onPressSaveRecipe}
-      />
+      <Button onPress={onPressSaveRecipe}>Save</Button>
     </Link>
   );
 
   useSetOptions({
-    title: `Editing: ${recipeName}`,
+    // title: `Editing: ${recipeName}`,
+    headerLeft: CancelButton,
     headerRight: SaveButton,
   });
 
@@ -139,7 +145,6 @@ export default function EditRecipeScreen() {
             onChangeText={setRecipeName}
             value={recipeName}
             multiline
-            returnKeyType='done'
             scrollEnabled={false}
           />
         </View>
@@ -158,14 +163,14 @@ export default function EditRecipeScreen() {
                   style={styles.textInput}
                   onChangeText={(text) => setIngredient(index)(text)}
                   value={ingredient}
-                  returnKeyType='done'
                 />
               </View>
             ))}
             <Button
-              title='add'
               onPress={() => setRecipeIngredients((prev) => [...prev, ''])}
-            />
+            >
+              Add
+            </Button>
           </View>
         </View>
 
@@ -185,23 +190,27 @@ export default function EditRecipeScreen() {
                   style={styles.textInput}
                   onChangeText={(text) => setStep(index)(text)}
                   value={step}
-                  returnKeyType='done'
                 />
               </View>
             ))}
-            <Button
-              title='add'
-              onPress={() => setRecipeMethod((prev) => [...prev, ''])}
-            />
+            <Button onPress={() => setRecipeMethod((prev) => [...prev, ''])}>
+              Add
+            </Button>
           </View>
         </View>
 
+        <Image
+          source={require('../assets/images/splash-icon.png')}
+          style={styles.dishesImage}
+        />
+
         {!isNewRecipe && (
           <Button
-            title='Delete'
-            color='red'
+            textColor={colors.danger}
             onPress={onPressDelete}
-          />
+          >
+            Delete
+          </Button>
         )}
       </SafeAreaScrollView>
     </KeyboardAvoidingView>
@@ -250,6 +259,12 @@ const useStyles = () => {
     textInput: {
       flex: 1,
       color: colors.onBackground,
+    },
+    dishesImage: {
+      aspectRatio: 1,
+      height: 50,
+      alignSelf: 'center',
+      margin: layout.spacer,
     },
   });
 };
