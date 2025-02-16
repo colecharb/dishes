@@ -1,9 +1,11 @@
 type Recipe = {
-  id: string,
-  name: string,
-  ingredients: string[],
-  method: string[],
+  id: string;
+  name: string;
+  ingredients: string[];
+  method: string[];
 };
+
+const NEW_RECIPE_ID = 'NEW RECIPE';
 
 const RECIPES: Recipe[] = [
   {
@@ -296,8 +298,4 @@ const RECIPES: Recipe[] = [
   },
 ];
 
-
-export {
-  type Recipe,
-  RECIPES,
-};
+export { type Recipe, RECIPES, NEW_RECIPE_ID };
