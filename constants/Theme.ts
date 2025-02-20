@@ -11,11 +11,16 @@ const Layout = {
   borderWidth: 1,
 } as const;
 
-// Colors present in both themes
-const commonColors: Partial<MD3Colors> = {
-  // egg yolk primary color
+const dishesColors = {
   primary: '#FDB955',
-};
+  secondary: '#777777',
+  danger: '#FF0000',
+} as const;
+
+// Colors present in both themes
+const commonColors: Partial<MD3Colors> & typeof dishesColors = {
+  ...dishesColors,
+} as const;
 
 const dishesTheme = {
   ...MD3DarkTheme,

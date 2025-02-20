@@ -5,25 +5,44 @@ import { RECIPES } from '@/constants/Recipes';
 import RecipeStorage from '@/helpers/RecipeStorage';
 import { useDishesTheme } from '@/constants/Theme';
 import { Button } from 'react-native-paper';
+import useRecipes from '@/hooks/useRecipes';
+import { useNavigation } from 'expo-router';
 
 export default function ModalScreen() {
+  const { reloadRecipes } = useRecipes();
+  const navigation = useNavigation();
   const styles = useStyles();
   const onPressResetRecipes = () => {
-    RecipeStorage.saveMultiple(RECIPES);
+    RecipeStorage.saveMultiple(RECIPES)
+      .then(reloadRecipes)
+      .then(navigation.goBack);
+  };
+  const onPressLogRecipes = () => {
+    RecipeStorage.getAll().then((recipes) => {
+      const sansDetail = recipes.map(({ id, name }) => ({ id, name }));
+      console.log(JSON.stringify(sansDetail, null, 2));
+    });
   };
 
   return (
     <View style={styles.container}>
-      {/* add image 'assets/images/splash-icon.png */}
       <Image
         source={require('../assets/images/splash-icon.png')}
         style={{ width: 100, height: 100 }}
       />
+
       <Button
         mode='outlined'
         onPress={onPressResetRecipes}
       >
         Add Dummy Recipes
+      </Button>
+
+      <Button
+        mode='outlined'
+        onPress={onPressLogRecipes}
+      >
+        log recipes in local storage
       </Button>
     </View>
   );

@@ -1,11 +1,12 @@
 type RootStackParamList = {
   index: undefined;
   recipe: {
-    recipeId: string,
+    recipeId: string;
   };
-  'new-recipe': undefined;
-  'settings': undefined;
+  'edit-recipe': {
+    recipeId: string;
+  };
+  settings: undefined;
 };
-
 
 export default RootStackParamList;

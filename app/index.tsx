@@ -12,7 +12,7 @@ import {
   TextInput,
 } from 'react-native';
 
-import { type Recipe } from '@/constants/Recipes';
+import { NEW_RECIPE_ID, type Recipe } from '@/constants/Recipes';
 import RecipeListItem from '@/components/RecipeListItem';
 import { useRef, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
@@ -179,7 +179,10 @@ export default function Recipes() {
 
           {!keyboardVisible && (
             <Link
-              href='/new-recipe'
+              href={{
+                pathname: '/edit-recipe',
+                params: { recipeId: NEW_RECIPE_ID },
+              }}
               asChild
             >
               <Button

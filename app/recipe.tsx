@@ -1,42 +1,41 @@
-import { Alert, Button, StyleSheet } from 'react-native';
+import { Image, ScrollView, StyleSheet } from 'react-native';
 import { View } from '@/components/Themed';
 import { Text } from 'react-native-paper';
 import RootStackParamList from '@/types/RootStackParamList';
-import { useLocalSearchParams, useNavigation } from 'expo-router';
-import SafeAreaScrollView from '@/components/SafeAreaScrollView';
+import { Link, useLocalSearchParams } from 'expo-router';
 import useSetOptions from '@/hooks/useSetOptions';
-import useRecipes from '@/hooks/useRecipes';
 import useRecipe from '@/hooks/useRecipe';
 import { useDishesTheme } from '@/constants/Theme';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { FontAwesome } from '@expo/vector-icons';
 
 type Params = RootStackParamList['recipe'];
 
 export default function RecipeScreen() {
-  const { recipeId } = useLocalSearchParams<RootStackParamList['recipe']>();
-  const { removeRecipe } = useRecipes();
-  const recipe = useRecipe(recipeId);
+  const { layout, colors } = useDishesTheme();
+  const { recipeId } = useLocalSearchParams<Params>();
+  const [recipe] = useRecipe(recipeId);
 
-  const navigation = useNavigation();
+  const EditButton = () => (
+    <Link
+      asChild
+      href={{
+        pathname: '/edit-recipe',
+        params: { recipeId },
+      }}
+    >
+      <FontAwesome
+        size={layout.spacer * 1.5}
+        name='edit'
+        color={colors.primary}
+      />
+    </Link>
+  );
 
-  useSetOptions({ title: recipe?.name });
-
-  const deleteAndGoBack = () => {
-    removeRecipe(recipeId).then(() => navigation.goBack());
-  };
-
-  const onPressDelete = () => {
-    Alert.alert('Deleting Recipe', 'Are you sure you want to delete this recipe?', [
-      {
-        text: 'Cancel',
-        style: 'cancel',
-      },
-      {
-        text: 'Delete',
-        style: 'destructive',
-        onPress: deleteAndGoBack,
-      },
-    ]);
-  };
+  useSetOptions({
+    title: recipe?.name,
+    headerRight: EditButton,
+  });
 
   const styles = useStyles();
 
@@ -49,7 +48,7 @@ export default function RecipeScreen() {
   }
 
   return (
-    <SafeAreaScrollView
+    <ScrollView
       style={styles.scrollView}
       contentContainerStyle={styles.scrollViewContent}
     >
@@ -71,30 +70,32 @@ export default function RecipeScreen() {
         </View>
       </View>
 
-      <Button
-        title='Delete'
-        color='red'
-        onPress={onPressDelete}
+      <Image
+        source={require('../assets/images/splash-icon.png')}
+        style={styles.dishesImage}
       />
-    </SafeAreaScrollView>
+    </ScrollView>
   );
 }
 
 const useStyles = () => {
   const { layout, colors } = useDishesTheme();
+  const safeAreaInsets = useSafeAreaInsets();
+
   return StyleSheet.create({
     container: {
       flex: 1,
     },
     scrollView: {
       backgroundColor: colors.background,
+      flex: 1,
     },
     scrollViewContent: {
       backgroundColor: colors.background,
       paddingHorizontal: layout.spacer,
-      paddingTop: 100 + layout.spacer,
+      paddingTop: layout.spacer,
+      paddingBottom: safeAreaInsets.bottom * 2,
       gap: layout.spacer * 2,
-      flex: 1,
     },
     recipeName: {
       fontSize: 35,
@@ -109,6 +110,12 @@ const useStyles = () => {
     heading: {
       fontSize: 30,
       fontWeight: 200,
+    },
+    dishesImage: {
+      aspectRatio: 1,
+      height: 50,
+      alignSelf: 'center',
+      margin: layout.spacer,
     },
   });
 };
