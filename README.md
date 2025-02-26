@@ -1,6 +1,6 @@
 # Dishes
 
-A simple and lightweight digital recipe box.
+_A simple and lightweight digital recipe box — work in progress._
 
 
 <p>
