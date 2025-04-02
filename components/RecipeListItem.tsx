@@ -27,14 +27,12 @@ const RecipeListItem = ({ recipe }: RecipeListItemProps) => {
     <Link
       asChild
       href={{
-        pathname: '/recipe',
-        params: { recipeId: recipe.id }
+        pathname: '/recipe/[recipeId]',
+        params: { recipeId: recipe.id },
       }}
     >
       <Pressable style={styles.container}>
-        <Text style={styles.recipeName}>
-          {recipe.name}
-        </Text>
+        <Text style={styles.recipeName}>{recipe.name}</Text>
       </Pressable>
     </Link>
   );
