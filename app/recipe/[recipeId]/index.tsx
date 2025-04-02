@@ -9,6 +9,8 @@ import { useDishesTheme } from '@/constants/Theme';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { FontAwesome } from '@expo/vector-icons';
 
+const SPLASH_ICON = require('@/assets/images/splash-icon.png');
+
 type Params = RootStackParamList['recipe'];
 
 export default function RecipeScreen() {
@@ -20,7 +22,7 @@ export default function RecipeScreen() {
     <Link
       asChild
       href={{
-        pathname: '/edit-recipe',
+        pathname: '/recipe/[recipeId]/edit',
         params: { recipeId },
       }}
     >
@@ -71,7 +73,7 @@ export default function RecipeScreen() {
       </View>
 
       <Image
-        source={require('../assets/images/splash-icon.png')}
+        source={SPLASH_ICON}
         style={styles.dishesImage}
       />
     </ScrollView>

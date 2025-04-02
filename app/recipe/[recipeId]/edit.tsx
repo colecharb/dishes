@@ -3,22 +3,24 @@ import {
   KeyboardAvoidingView,
   StyleSheet,
   TextInput,
+  Alert,
 } from 'react-native';
 import { View } from '@/components/Themed';
 import { Button, Text } from 'react-native-paper';
-import RootStackParamList from '@/types/RootStackParamList';
-import { Link, useNavigation } from 'expo-router';
-import SafeAreaScrollView from '@/components/SafeAreaScrollView';
-import useSetOptions from '@/hooks/useSetOptions';
+import { Link, useNavigation, useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { v4 as uuid } from 'react-native-uuid/dist/v4';
-import useRecipes from '@/hooks/useRecipes';
-import { useDishesTheme } from '@/constants/Theme';
-import { useLocalSearchParams } from 'expo-router';
-import { Alert } from 'react-native';
-import { NEW_RECIPE_ID } from '@/constants/Recipes';
-import useRecipe from '@/hooks/useRecipe';
 import { NavigationProp } from '@react-navigation/native';
+
+import RootStackParamList from '@/types/RootStackParamList';
+import SafeAreaScrollView from '@/components/SafeAreaScrollView';
+import useSetOptions from '@/hooks/useSetOptions';
+import useRecipes from '@/hooks/useRecipes';
+import useRecipe from '@/hooks/useRecipe';
+import { useDishesTheme } from '@/constants/Theme';
+import { NEW_RECIPE_ID } from '@/constants/Recipes';
+
+const SPLASH_ICON = require('@/assets/images/splash-icon.png');
 
 type Params = RootStackParamList['edit-recipe'];
 
@@ -200,7 +202,7 @@ export default function EditRecipeScreen() {
         </View>
 
         <Image
-          source={require('../assets/images/splash-icon.png')}
+          source={SPLASH_ICON}
           style={styles.dishesImage}
         />
 

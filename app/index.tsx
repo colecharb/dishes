@@ -95,10 +95,10 @@ export default function Recipes() {
       </View>
     ) : null;
 
-  const renderSectionFooter: SectionListProps<
-    Recipe,
-    SearchResultSection
-  >['renderSectionHeader'] = () => <View style={styles.renderSectionFooter} />;
+  // const renderSectionFooter: SectionListProps<
+  //   Recipe,
+  //   SearchResultSection
+  // >['renderSectionHeader'] = () => <View style={styles.renderSectionFooter} />;
 
   return (
     <View style={{ flex: 1 }}>
@@ -180,7 +180,7 @@ export default function Recipes() {
           {!keyboardVisible && (
             <Link
               href={{
-                pathname: '/edit-recipe',
+                pathname: '/recipe/[recipeId]/edit',
                 params: { recipeId: NEW_RECIPE_ID },
               }}
               asChild
