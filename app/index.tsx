@@ -41,7 +41,7 @@ export default function Recipes() {
 
   const [searchQuery, setSearchQuery] = useState('');
 
-  const [keyboardVisible] = useKeyboardVisible();
+  const keyboardVisible = useKeyboardVisible();
 
   const { recipes } = useRecipes();
 
