@@ -121,10 +121,10 @@ export default function Recipes() {
           colors={[
             colors.background,
             colors.background,
-            colors.background + '00',
+            colors.background + '00', // background + transparency
             colors.background + '00',
           ]}
-          locations={[0, 0.05, 0.25, 1]}
+          locations={[0, 0.04, 0.25, 1]}
           pointerEvents='none'
           style={styles.gradient}
         />
@@ -137,7 +137,6 @@ export default function Recipes() {
             style={styles.settingsButton}
             name='gears'
             size={25}
-            color='white'
           />
         </Link>
 
@@ -239,6 +238,7 @@ const useStyles = () => {
     },
     settingsButton: {
       position: 'absolute',
+      color: colors.onBackground,
       // top: safeAreaInsets.top,
       // left: safeAreaInsets.left,
       zIndex: 10,
