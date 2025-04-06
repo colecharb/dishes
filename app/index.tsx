@@ -28,6 +28,8 @@ import useRecipes from '@/hooks/useRecipes';
 import { useDishesTheme } from '@/constants/Theme';
 import useKeyboardVisible from '@/hooks/useKeyboardVisible';
 
+const SPLASH_ICON_SOURCE = require('../assets/images/splash-icon.png');
+
 type SearchResultSection = {
   title: string;
 };
@@ -100,10 +102,10 @@ export default function Recipes() {
   const ListFooterComponent: SectionListProps<
     Recipe,
     SearchResultSection
-  >['renderSectionHeader'] = () => (
+  >['renderSectionFooter'] = () => (
     <View style={styles.renderSectionFooter}>
       <Image
-        source={require('../assets/images/splash-icon.png')}
+        source={SPLASH_ICON_SOURCE}
         style={styles.dishesIcon}
       />
     </View>
@@ -129,16 +131,23 @@ export default function Recipes() {
           style={styles.gradient}
         />
 
-        <Link
-          asChild
-          href={'/settings'}
-        >
-          <FontAwesome
-            style={styles.settingsButton}
-            name='gears'
-            size={25}
-          />
-        </Link>
+        {!keyboardVisible && (
+          <View
+            pointerEvents='auto'
+            style={styles.settingsButtonContainer}
+          >
+            <Link
+              asChild
+              href={'/settings'}
+            >
+              <FontAwesome
+                style={styles.settingsButton}
+                name='gears'
+                size={25}
+              />
+            </Link>
+          </View>
+        )}
 
         {searchQuery ? (
           <SectionList<Recipe, SearchResultSection>
@@ -236,16 +245,14 @@ const useStyles = () => {
       flex: 1,
       zIndex: 10,
     },
+    settingsButtonContainer: {
+      zIndex: 10,
+    },
     settingsButton: {
       position: 'absolute',
       color: colors.onBackground,
-      // top: safeAreaInsets.top,
-      // left: safeAreaInsets.left,
-      zIndex: 10,
-      // shadowRadius: Layout.spacer,
-      // shadowColor: 'black',
-      // shadowOpacity: 0.5,
-      margin: layout.spacer,
+      margin: layout.spacer * 1.5,
+      flexDirection: 'row',
     },
     flatList: {
       // flex: 1,
