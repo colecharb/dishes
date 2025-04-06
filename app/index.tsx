@@ -119,12 +119,12 @@ export default function Recipes() {
 
         <LinearGradient
           colors={[
-            'rgba(0,0,0,1)',
-            'rgba(0,0,0,1)',
-            'transparent',
-            'transparent',
+            colors.background,
+            colors.background,
+            colors.background + '00',
+            colors.background + '00',
           ]}
-          locations={[0, 0.05, 0.5, 1]}
+          locations={[0, 0.05, 0.25, 1]}
           pointerEvents='none'
           style={styles.gradient}
         />
