@@ -27,7 +27,6 @@ const dishesTheme = {
   layout: Layout,
   colors: {
     ...MD3DarkTheme.colors,
-    // black background
     background: '#000000',
     ...commonColors,
   },
@@ -42,6 +41,7 @@ const lightTheme: DishesTheme = {
   ...dishesTheme,
   colors: {
     ...MD3LightTheme.colors,
+    background: '#ffffff',
     ...commonColors,
   },
   fonts: {
