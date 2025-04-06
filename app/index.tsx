@@ -1,6 +1,8 @@
 import {
   Button,
+  Dimensions,
   FlatList,
+  Image,
   Keyboard,
   KeyboardAvoidingView,
   ListRenderItem,
@@ -12,6 +14,7 @@ import {
   TextInput,
 } from 'react-native';
 
+import { LinearGradient } from 'expo-linear-gradient';
 import { NEW_RECIPE_ID, type Recipe } from '@/constants/Recipes';
 import RecipeListItem from '@/components/RecipeListItem';
 import { useRef, useState } from 'react';
@@ -23,6 +26,7 @@ import { FontAwesome } from '@expo/vector-icons';
 import { Link } from 'expo-router';
 import useRecipes from '@/hooks/useRecipes';
 import { useDishesTheme } from '@/constants/Theme';
+import useKeyboardVisible from '@/hooks/useKeyboardVisible';
 
 type SearchResultSection = {
   title: string;
@@ -36,7 +40,8 @@ export default function Recipes() {
   const searchInputRef = useRef<TextInput>(null);
 
   const [searchQuery, setSearchQuery] = useState('');
-  const [keyboardVisible, setKeyboardVisible] = useState(false);
+
+  const [keyboardVisible] = useKeyboardVisible();
 
   const { recipes } = useRecipes();
 
@@ -65,9 +70,6 @@ export default function Recipes() {
     },
   ];
 
-  Keyboard.addListener('keyboardWillShow', () => setKeyboardVisible(true));
-  Keyboard.addListener('keyboardWillHide', () => setKeyboardVisible(false));
-
   const onPressClearSearch = () => {
     setSearchQuery('');
     searchInputRef.current?.clear();
@@ -95,10 +97,17 @@ export default function Recipes() {
       </View>
     ) : null;
 
-  // const renderSectionFooter: SectionListProps<
-  //   Recipe,
-  //   SearchResultSection
-  // >['renderSectionHeader'] = () => <View style={styles.renderSectionFooter} />;
+  const ListFooterComponent: SectionListProps<
+    Recipe,
+    SearchResultSection
+  >['renderSectionHeader'] = () => (
+    <View style={styles.renderSectionFooter}>
+      <Image
+        source={require('../assets/images/splash-icon.png')}
+        style={styles.dishesIcon}
+      />
+    </View>
+  );
 
   return (
     <View style={{ flex: 1 }}>
@@ -107,6 +116,18 @@ export default function Recipes() {
         behavior='height'
       >
         <StatusBar hidden />
+
+        <LinearGradient
+          colors={[
+            'rgba(0,0,0,1)',
+            'rgba(0,0,0,1)',
+            'transparent',
+            'transparent',
+          ]}
+          locations={[0, 0.05, 0.5, 1]}
+          pointerEvents='none'
+          style={styles.gradient}
+        />
 
         <Link
           asChild
@@ -135,6 +156,7 @@ export default function Recipes() {
             showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps='handled'
             stickySectionHeadersEnabled={false}
+            ListFooterComponent={ListFooterComponent}
           />
         ) : (
           <FlatList<Recipe>
@@ -148,6 +170,7 @@ export default function Recipes() {
             renderItem={renderItem}
             showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps='handled'
+            ListFooterComponent={ListFooterComponent}
           />
         )}
 
@@ -200,8 +223,20 @@ export default function Recipes() {
 const useStyles = () => {
   const { layout, colors } = useDishesTheme();
   const safeAreaInsets = useSafeAreaInsets();
+  const { height: screenHeight } = Dimensions.get('screen');
+
+  const footerHeight = screenHeight / 3;
 
   return StyleSheet.create({
+    gradient: {
+      position: 'absolute',
+      top: 0,
+      bottom: 0,
+      left: 0,
+      right: 0,
+      flex: 1,
+      zIndex: 10,
+    },
     settingsButton: {
       position: 'absolute',
       // top: safeAreaInsets.top,
@@ -272,7 +307,14 @@ const useStyles = () => {
       backgroundColor: 'grey',
     },
     renderSectionFooter: {
-      height: layout.spacer,
+      height: footerHeight,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    dishesIcon: {
+      height: 75,
+      aspectRatio: 1,
+      opacity: 0.2,
     },
   });
 };
