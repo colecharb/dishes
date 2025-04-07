@@ -27,6 +27,7 @@ import { Link } from 'expo-router';
 import useRecipes from '@/hooks/useRecipes';
 import { useDishesTheme } from '@/constants/Theme';
 import useKeyboardVisible from '@/hooks/useKeyboardVisible';
+import GradientOverlay from '@/components/GradientOverlay';
 
 const SPLASH_ICON_SOURCE = require('../assets/images/splash-icon.png');
 
@@ -119,7 +120,7 @@ export default function Recipes() {
       >
         <StatusBar hidden />
 
-        <LinearGradient
+        <GradientOverlay
           colors={[
             colors.background,
             colors.background,
@@ -127,8 +128,6 @@ export default function Recipes() {
             colors.background + '00',
           ]}
           locations={[0, 0.04, 0.25, 1]}
-          pointerEvents='none'
-          style={styles.gradient}
         />
 
         {!keyboardVisible && (
@@ -236,15 +235,6 @@ const useStyles = () => {
   const footerHeight = screenHeight / 3;
 
   return StyleSheet.create({
-    gradient: {
-      position: 'absolute',
-      top: 0,
-      bottom: 0,
-      left: 0,
-      right: 0,
-      flex: 1,
-      zIndex: 10,
-    },
     settingsButtonContainer: {
       zIndex: 10,
     },

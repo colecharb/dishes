@@ -8,6 +8,7 @@ import useRecipe from '@/hooks/useRecipe';
 import { useDishesTheme } from '@/constants/Theme';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { FontAwesome } from '@expo/vector-icons';
+import GradientOverlay from '@/components/GradientOverlay';
 
 const SPLASH_ICON = require('@/assets/images/splash-icon.png');
 
@@ -50,33 +51,44 @@ export default function RecipeScreen() {
   }
 
   return (
-    <ScrollView
-      style={styles.scrollView}
-      contentContainerStyle={styles.scrollViewContent}
-    >
-      <View style={styles.section}>
-        <Text style={styles.heading}>Ingredients</Text>
-        <View style={styles.sectionContent}>
-          {recipe.ingredients.map((ingredient) => (
-            <Text key={ingredient}>{ingredient}</Text>
-          ))}
-        </View>
-      </View>
-
-      <View style={styles.section}>
-        <Text style={styles.heading}>Preparation</Text>
-        <View style={styles.sectionContent}>
-          {recipe.method.map((step, index) => (
-            <Text key={step}>{`${index + 1}.  ${step}`}</Text>
-          ))}
-        </View>
-      </View>
-
-      <Image
-        source={SPLASH_ICON}
-        style={styles.dishesImage}
+    <View style={styles.container}>
+      <GradientOverlay
+        colors={[
+          colors.background,
+          colors.background + '00',
+          colors.background + '00',
+          colors.background,
+        ]}
+        locations={[0, 0.05, 0.8, 1]}
       />
-    </ScrollView>
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollViewContent}
+      >
+        <View style={styles.section}>
+          <Text style={styles.heading}>Ingredients</Text>
+          <View style={styles.sectionContent}>
+            {recipe.ingredients.map((ingredient) => (
+              <Text key={ingredient}>{ingredient}</Text>
+            ))}
+          </View>
+        </View>
+
+        <View style={styles.section}>
+          <Text style={styles.heading}>Preparation</Text>
+          <View style={styles.sectionContent}>
+            {recipe.method.map((step, index) => (
+              <Text key={step}>{`${index + 1}.  ${step}`}</Text>
+            ))}
+          </View>
+        </View>
+
+        <Image
+          source={SPLASH_ICON}
+          style={styles.dishesImage}
+        />
+      </ScrollView>
+    </View>
   );
 }
 
