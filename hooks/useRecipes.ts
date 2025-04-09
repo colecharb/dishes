@@ -1,4 +1,4 @@
-import { Recipe, RecipeUpdate } from '@/constants/Recipes';
+import { Recipe } from '@/constants/Recipes';
 import RecipeStorage from '@/helpers/recipeStorage';
 import recipesAtom from '@/jotai/recipesAtom';
 import { useAtom } from 'jotai';

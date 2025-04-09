@@ -1,4 +1,4 @@
-import { Recipe, RecipeRaw, RecipeUpdate } from '../constants/Recipes';
+import { Recipe, RecipeRaw } from '../constants/Recipes';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const RECIPE_ID_INDEX_KEY = 'recipe.index';

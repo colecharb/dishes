@@ -16,8 +16,6 @@ type Recipe = RecipeBase & {
   modifiedAt: Date;
 };
 
-type RecipeUpdate = Omit<Recipe, 'createdAt'>;
-
 const NEW_RECIPE_ID = 'NEW RECIPE';
 
 const RECIPES: Recipe[] = [
@@ -337,5 +335,5 @@ const RECIPES: Recipe[] = [
   },
 ];
 
-export type { RecipeRaw, Recipe, RecipeUpdate };
+export type { RecipeRaw, Recipe };
 export { RECIPES, NEW_RECIPE_ID };
