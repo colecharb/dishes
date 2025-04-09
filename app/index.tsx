@@ -14,7 +14,6 @@ import {
   TextInput,
 } from 'react-native';
 
-import { LinearGradient } from 'expo-linear-gradient';
 import { NEW_RECIPE_ID, type Recipe } from '@/constants/Recipes';
 import RecipeListItem from '@/components/RecipeListItem';
 import { useRef, useState } from 'react';
