@@ -1,4 +1,4 @@
-import { Image, StyleSheet } from 'react-native';
+import { Alert, Image, StyleSheet } from 'react-native';
 
 import { View } from '@/components/Themed';
 import { RECIPES } from '@/constants/Recipes';
@@ -12,15 +12,26 @@ export default function ModalScreen() {
   const { reloadRecipes } = useRecipes();
   const navigation = useNavigation();
   const styles = useStyles();
-  const onPressResetRecipes = () => {
+  const onPressAddDummyRecipes = () => {
     RecipeStorage.saveMultiple(RECIPES)
       .then(reloadRecipes)
       .then(navigation.goBack);
   };
   const onPressLogRecipes = () => {
     RecipeStorage.getAll().then((recipes) => {
-      const sansDetail = recipes.map(({ id, name }) => ({ id, name }));
-      console.log(JSON.stringify(sansDetail, null, 2));
+      const simplified = recipes.map(({ id, name, createdAt, modifiedAt }) => ({
+        id,
+        name,
+        createdAt: createdAt.toLocaleString(),
+        modifiedAt: modifiedAt.toLocaleString(),
+      }));
+      console.log(JSON.stringify(simplified, null, 2));
+    });
+  };
+  const onPressDeleteAllRecipes = () => {
+    RecipeStorage.deleteAll().then(() => {
+      reloadRecipes();
+      navigation.goBack();
     });
   };
 
@@ -33,9 +44,32 @@ export default function ModalScreen() {
 
       <Button
         mode='outlined'
-        onPress={onPressResetRecipes}
+        onPress={onPressAddDummyRecipes}
       >
         Add Dummy Recipes
+      </Button>
+
+      <Button
+        mode='outlined'
+        onPress={() =>
+          Alert.alert(
+            'Delete all recipes',
+            'Are you sure you want to delete all recipes?',
+            [
+              {
+                text: 'Cancel',
+                style: 'cancel',
+              },
+              {
+                text: 'Delete',
+                onPress: () => onPressDeleteAllRecipes(),
+                style: 'destructive',
+              },
+            ],
+          )
+        }
+      >
+        Delete all Recipes
       </Button>
 
       <Button
