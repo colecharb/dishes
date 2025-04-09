@@ -2,7 +2,7 @@ import { Image, StyleSheet } from 'react-native';
 
 import { View } from '@/components/Themed';
 import { RECIPES } from '@/constants/Recipes';
-import RecipeStorage from '@/helpers/RecipeStorage';
+import RecipeStorage from '@/helpers/recipeStorage';
 import { useDishesTheme } from '@/constants/Theme';
 import { Button } from 'react-native-paper';
 import useRecipes from '@/hooks/useRecipes';
