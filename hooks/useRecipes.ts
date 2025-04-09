@@ -1,5 +1,5 @@
 import { Recipe } from '@/constants/Recipes';
-import RecipeStorage from '@/helpers/RecipeStorage';
+import RecipeStorage from '@/helpers/recipeStorage';
 import recipesAtom from '@/jotai/recipesAtom';
 import { useAtom } from 'jotai';
 import { useCallback, useEffect } from 'react';
