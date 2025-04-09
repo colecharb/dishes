@@ -1,6 +1,5 @@
 import keyboardVisibleAtom from '@/jotai/keyboardVisibleAtom';
 import { useAtom } from 'jotai';
-import { useState } from 'react';
 import { Keyboard } from 'react-native';
 
 const useKeyboardVisible = () => {
