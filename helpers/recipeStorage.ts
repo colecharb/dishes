@@ -1,13 +1,13 @@
-import { Recipe } from '../constants/Recipes';
+import { Recipe, RecipeRaw } from '../constants/Recipes';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const RECIPE_ID_INDEX_KEY = 'recipe.index';
 
 // RECIPE IDS //
 
 /**
  * Get the list of recipe IDs.
  */
-
-const RECIPE_ID_INDEX_KEY = 'recipe.index';
 
 const getRecipeIds = async (): Promise<string[]> =>
   AsyncStorage.getItem(RECIPE_ID_INDEX_KEY)
@@ -49,6 +49,19 @@ const removeFromRecipeIds = async (id: string): Promise<void> => {
 
 // RECIPES //
 
+const recipeRawToRecipe = (recipeRaw: RecipeRaw | null): Recipe | null => {
+  if (!recipeRaw) {
+    return null;
+  }
+  const { createdAt, modifiedAt, ...rest } = recipeRaw;
+
+  return {
+    createdAt: new Date(createdAt),
+    modifiedAt: new Date(modifiedAt),
+    ...rest,
+  };
+};
+
 const save = (recipe: Recipe): Promise<void> =>
   AsyncStorage.setItem(recipe.id, JSON.stringify(recipe))
     .then(() => addToRecipeIds([recipe.id]))
@@ -68,8 +81,9 @@ const saveMultiple = async (recipes: Recipe[]): Promise<void> => {
 const get = (id: string): Promise<Recipe | null> =>
   AsyncStorage.getItem(id)
     .then((jsonString) =>
-      jsonString ? (JSON.parse(jsonString) as Recipe) : null,
+      jsonString ? (JSON.parse(jsonString) as RecipeRaw) : null,
     )
+    .then((recipeRaw) => recipeRawToRecipe(recipeRaw))
     .catch((error) => {
       console.error('Error retrieving recipe:', error);
       return null;
@@ -82,7 +96,10 @@ const getAll = (): Promise<Recipe[]> =>
     })
     .then((result) => {
       return result
-        .map(([key, value]) => (value ? (JSON.parse(value) as Recipe) : null))
+        .map(([key, value]) =>
+          value ? (JSON.parse(value) as RecipeRaw) : null,
+        )
+        .map(recipeRawToRecipe)
         .filter((recipe) => recipe !== null);
     })
     .catch((error) => {
@@ -99,12 +116,25 @@ const deleteRecipe = (id: string): Promise<void> =>
       console.error('Error deleting recipe:', error);
     });
 
+const deleteAll = (): Promise<void> =>
+  getRecipeIds()
+    .then((keys) => {
+      return AsyncStorage.multiRemove(keys);
+    })
+    .then(() => {
+      return AsyncStorage.removeItem(RECIPE_ID_INDEX_KEY);
+    })
+    .catch((error) => {
+      console.error('Error deleting all recipes:', error);
+    });
+
 const RecipeStorage = {
   save,
   saveMultiple,
   get,
   getAll,
   delete: deleteRecipe,
+  deleteAll,
 };
 
 export default RecipeStorage;
