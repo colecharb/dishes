@@ -3,10 +3,9 @@
   "compilerOptions": {
     "strict": true,
     "paths": {
-      "@/*": [
-        "./*"
-      ]
-    }
+      "@/*": ["./*"]
+    },
+    "moduleResolution": "bundler"
   },
   "include": [
     "**/*.ts",

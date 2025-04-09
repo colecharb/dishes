@@ -1,8 +1,19 @@
-type Recipe = {
+type RecipeBase = {
   id: string;
   name: string;
   ingredients: string[];
   method: string[];
+};
+
+// Recipe sa parsed from AsyncStorage
+type RecipeRaw = RecipeBase & {
+  createdAt: string;
+  modifiedAt: string;
+};
+
+type Recipe = RecipeBase & {
+  createdAt: Date;
+  modifiedAt: Date;
 };
 
 const NEW_RECIPE_ID = 'NEW RECIPE';
@@ -25,6 +36,8 @@ const RECIPES: Recipe[] = [
       'Simmer for 30 mins or so.',
       'Cook pasta al dente and add to the soup.',
     ],
+    createdAt: new Date('2023-01-01T10:00:00Z'),
+    modifiedAt: new Date('2023-01-02T12:00:00Z'),
   },
   {
     id: 'b',
@@ -51,6 +64,8 @@ const RECIPES: Recipe[] = [
       'Add Thai basil leaves, stir-fry until wilted.',
       'Serve hot.',
     ],
+    createdAt: new Date('2023-02-01T09:00:00Z'),
+    modifiedAt: new Date('2023-02-01T10:30:00Z'),
   },
   {
     id: 'c',
@@ -74,6 +89,8 @@ const RECIPES: Recipe[] = [
       'Garnish with parsley and Parmesan, if desired.',
       'Serve immediately.',
     ],
+    createdAt: new Date('2023-03-01T08:00:00Z'),
+    modifiedAt: new Date('2023-03-02T08:30:00Z'),
   },
   {
     id: 'd',
@@ -94,6 +111,8 @@ const RECIPES: Recipe[] = [
       'Remove from oven and top with fresh basil leaves and a drizzle of olive oil.',
       'Slice and serve hot.',
     ],
+    createdAt: new Date('2023-04-01T07:00:00Z'),
+    modifiedAt: new Date('2023-04-01T09:00:00Z'),
   },
   {
     id: 'e',
@@ -120,6 +139,8 @@ const RECIPES: Recipe[] = [
       'Stir in heavy cream and cooked chicken, simmer for another 5 minutes.',
       'Season with salt and garnish with fresh cilantro before serving.',
     ],
+    createdAt: new Date('2023-05-01T06:00:00Z'),
+    modifiedAt: new Date('2023-05-01T07:30:00Z'),
   },
   {
     id: 'f',
@@ -147,6 +168,8 @@ const RECIPES: Recipe[] = [
       'Cover and cook until egg whites are set but yolks are still runny.',
       'Garnish with parsley and serve with crusty bread.',
     ],
+    createdAt: new Date('2023-06-01T05:00:00Z'),
+    modifiedAt: new Date('2023-06-01T06:00:00Z'),
   },
   {
     id: 'g',
@@ -167,6 +190,8 @@ const RECIPES: Recipe[] = [
       'Taste and adjust seasoning as needed.',
       'Serve immediately with tortilla chips or as a topping.',
     ],
+    createdAt: new Date('2023-07-01T04:00:00Z'),
+    modifiedAt: new Date('2023-07-01T05:00:00Z'),
   },
   {
     id: 'h',
@@ -191,6 +216,8 @@ const RECIPES: Recipe[] = [
       'If desired, add cornstarch slurry and cook for another 1-2 minutes until sauce thickens.',
       'Serve immediately over steamed rice or noodles.',
     ],
+    createdAt: new Date('2023-08-01T03:00:00Z'),
+    modifiedAt: new Date('2023-08-01T04:30:00Z'),
   },
   {
     id: 'i',
@@ -218,6 +245,8 @@ const RECIPES: Recipe[] = [
       'Flip and cook the other side for 1-2 minutes until golden brown.',
       'Serve with maple syrup.',
     ],
+    createdAt: new Date('2023-09-01T02:00:00Z'),
+    modifiedAt: new Date('2023-09-01T03:00:00Z'),
   },
   {
     id: 'j',
@@ -237,6 +266,8 @@ const RECIPES: Recipe[] = [
       'Season with salt and pepper.',
       'Serve immediately as a refreshing appetizer or side dish.',
     ],
+    createdAt: new Date('2023-10-01T01:00:00Z'),
+    modifiedAt: new Date('2023-10-01T02:00:00Z'),
   },
   {
     id: 'k',
@@ -259,6 +290,8 @@ const RECIPES: Recipe[] = [
       'Return shrimp to the skillet and toss to coat in the garlic butter.',
       'Serve immediately with crusty bread or over rice.',
     ],
+    createdAt: new Date('2023-11-01T00:00:00Z'),
+    modifiedAt: new Date('2023-11-01T01:00:00Z'),
   },
   {
     id: 'l',
@@ -276,6 +309,8 @@ const RECIPES: Recipe[] = [
       'Add ice cubes if desired and blend again.',
       'Pour into glasses and serve chilled.',
     ],
+    createdAt: new Date('2023-12-01T23:00:00Z'),
+    modifiedAt: new Date('2023-12-02T00:00:00Z'),
   },
   {
     id: 'm',
@@ -295,7 +330,10 @@ const RECIPES: Recipe[] = [
       'Bake for 12-15 minutes or until salmon flakes easily with a fork.',
       'Serve hot with your favorite side dish.',
     ],
+    createdAt: new Date('2023-12-31T22:00:00Z'),
+    modifiedAt: new Date('2024-01-01T00:00:00Z'),
   },
 ];
 
-export { type Recipe, RECIPES, NEW_RECIPE_ID };
+export type { RecipeRaw, Recipe };
+export { RECIPES, NEW_RECIPE_ID };

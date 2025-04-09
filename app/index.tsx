@@ -1,6 +1,8 @@
 import {
   Button,
+  Dimensions,
   FlatList,
+  Image,
   Keyboard,
   KeyboardAvoidingView,
   ListRenderItem,
@@ -23,6 +25,10 @@ import { FontAwesome } from '@expo/vector-icons';
 import { Link } from 'expo-router';
 import useRecipes from '@/hooks/useRecipes';
 import { useDishesTheme } from '@/constants/Theme';
+import useKeyboardVisible from '@/hooks/useKeyboardVisible';
+import GradientOverlay from '@/components/GradientOverlay';
+
+const SPLASH_ICON_SOURCE = require('../assets/images/splash-icon.png');
 
 type SearchResultSection = {
   title: string;
@@ -36,7 +42,8 @@ export default function Recipes() {
   const searchInputRef = useRef<TextInput>(null);
 
   const [searchQuery, setSearchQuery] = useState('');
-  const [keyboardVisible, setKeyboardVisible] = useState(false);
+
+  const keyboardVisible = useKeyboardVisible();
 
   const { recipes } = useRecipes();
 
@@ -65,9 +72,6 @@ export default function Recipes() {
     },
   ];
 
-  Keyboard.addListener('keyboardWillShow', () => setKeyboardVisible(true));
-  Keyboard.addListener('keyboardWillHide', () => setKeyboardVisible(false));
-
   const onPressClearSearch = () => {
     setSearchQuery('');
     searchInputRef.current?.clear();
@@ -95,10 +99,17 @@ export default function Recipes() {
       </View>
     ) : null;
 
-  // const renderSectionFooter: SectionListProps<
-  //   Recipe,
-  //   SearchResultSection
-  // >['renderSectionHeader'] = () => <View style={styles.renderSectionFooter} />;
+  const ListFooterComponent: SectionListProps<
+    Recipe,
+    SearchResultSection
+  >['renderSectionFooter'] = () => (
+    <View style={styles.renderSectionFooter}>
+      <Image
+        source={SPLASH_ICON_SOURCE}
+        style={styles.dishesIcon}
+      />
+    </View>
+  );
 
   return (
     <View style={{ flex: 1 }}>
@@ -108,17 +119,33 @@ export default function Recipes() {
       >
         <StatusBar hidden />
 
-        <Link
-          asChild
-          href={'/settings'}
-        >
-          <FontAwesome
-            style={styles.settingsButton}
-            name='gears'
-            size={25}
-            color='white'
-          />
-        </Link>
+        <GradientOverlay
+          colors={[
+            colors.background,
+            colors.background,
+            colors.background + '00', // background + transparency
+            colors.background + '00',
+          ]}
+          locations={[0, 0.04, 0.25, 1]}
+        />
+
+        {!keyboardVisible && (
+          <View
+            pointerEvents='auto'
+            style={styles.settingsButtonContainer}
+          >
+            <Link
+              asChild
+              href={'/settings'}
+            >
+              <FontAwesome
+                style={styles.settingsButton}
+                name='gears'
+                size={25}
+              />
+            </Link>
+          </View>
+        )}
 
         {searchQuery ? (
           <SectionList<Recipe, SearchResultSection>
@@ -135,6 +162,7 @@ export default function Recipes() {
             showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps='handled'
             stickySectionHeadersEnabled={false}
+            ListFooterComponent={ListFooterComponent}
           />
         ) : (
           <FlatList<Recipe>
@@ -148,6 +176,7 @@ export default function Recipes() {
             renderItem={renderItem}
             showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps='handled'
+            ListFooterComponent={ListFooterComponent}
           />
         )}
 
@@ -200,17 +229,19 @@ export default function Recipes() {
 const useStyles = () => {
   const { layout, colors } = useDishesTheme();
   const safeAreaInsets = useSafeAreaInsets();
+  const { height: screenHeight } = Dimensions.get('screen');
+
+  const footerHeight = screenHeight / 3;
 
   return StyleSheet.create({
+    settingsButtonContainer: {
+      zIndex: 10,
+    },
     settingsButton: {
       position: 'absolute',
-      // top: safeAreaInsets.top,
-      // left: safeAreaInsets.left,
-      zIndex: 10,
-      // shadowRadius: Layout.spacer,
-      // shadowColor: 'black',
-      // shadowOpacity: 0.5,
-      margin: layout.spacer,
+      color: colors.onBackground,
+      margin: layout.spacer * 1.5,
+      flexDirection: 'row',
     },
     flatList: {
       // flex: 1,
@@ -272,7 +303,14 @@ const useStyles = () => {
       backgroundColor: 'grey',
     },
     renderSectionFooter: {
-      height: layout.spacer,
+      height: footerHeight,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    dishesIcon: {
+      height: 75,
+      aspectRatio: 1,
+      opacity: 0.2,
     },
   });
 };
