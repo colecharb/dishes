@@ -5,15 +5,18 @@ type RecipeBase = {
   method: string[];
 };
 
+// Recipe sa parsed from AsyncStorage
+type RecipeRaw = RecipeBase & {
+  createdAt: string;
+  modifiedAt: string;
+};
+
 type Recipe = RecipeBase & {
   createdAt: Date;
   modifiedAt: Date;
 };
 
-type RecipeRaw = RecipeBase & {
-  createdAt: string;
-  modifiedAt: string;
-};
+type RecipeUpdate = Omit<Recipe, 'createdAt'>;
 
 const NEW_RECIPE_ID = 'NEW RECIPE';
 
@@ -334,4 +337,5 @@ const RECIPES: Recipe[] = [
   },
 ];
 
-export { type Recipe, type RecipeRaw, RECIPES, NEW_RECIPE_ID };
+export type { RecipeRaw, Recipe, RecipeUpdate };
+export { RECIPES, NEW_RECIPE_ID };

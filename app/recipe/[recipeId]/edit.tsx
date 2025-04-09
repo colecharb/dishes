@@ -61,20 +61,30 @@ export default function EditRecipeScreen() {
     ]);
   };
 
-  const updateRecipe = () =>
+  const updateRecipe = () => {
+    if (!recipe) return;
+    const now = new Date();
+
     saveRecipe({
       id: recipeId,
       name: recipeName,
       ingredients: recipeIngredients,
       method: recipeMethod,
+      createdAt: recipe.createdAt,
+      modifiedAt: now,
     });
-  const createRecipe = () =>
+  };
+  const createRecipe = () => {
+    const now = new Date();
     saveRecipe({
       id: uuid(),
       name: recipeName,
       ingredients: recipeIngredients,
       method: recipeMethod,
+      createdAt: now,
+      modifiedAt: now,
     });
+  };
   const deleteAndGoBack = () => {
     deleteRecipe(recipeId).then(() => {
       navigation.goBack();
