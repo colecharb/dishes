@@ -112,7 +112,7 @@ export default function Recipes() {
   );
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={styles.container}>
       <KeyboardAvoidingView
         style={styles.keyboardAvoidingView}
         behavior='height'
@@ -234,6 +234,10 @@ const useStyles = () => {
   const footerHeight = screenHeight / 3;
 
   return StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors.background,
+    },
     settingsButtonContainer: {
       zIndex: 10,
     },
@@ -292,7 +296,6 @@ const useStyles = () => {
       fontWeight: 900,
       fontStyle: 'italic',
     },
-    searchBarClearButton: {},
     bottomButtonsContainer: {
       flexDirection: 'row',
       justifyContent: 'space-between',
