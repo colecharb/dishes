@@ -8,7 +8,7 @@ import {
 import { View } from '@/components/Themed';
 import { Button, Text } from 'react-native-paper';
 import { Link, useNavigation, useLocalSearchParams } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { v4 as uuid } from 'react-native-uuid/dist/v4';
 import { NavigationProp } from '@react-navigation/native';
 
@@ -34,6 +34,9 @@ export default function EditRecipeScreen() {
   const [recipeName, setRecipeName] = useState<string>('');
   const [recipeIngredients, setRecipeIngredients] = useState<string[]>(['']);
   const [recipeMethod, setRecipeMethod] = useState<string[]>(['']);
+
+  const ingredientRefs = useRef<(TextInput | null)[]>([]);
+  const methodRefs = useRef<(TextInput | null)[]>([]);
 
   const [recipe] = useRecipe(recipeId);
 
@@ -61,16 +64,66 @@ export default function EditRecipeScreen() {
     ]);
   };
 
+  const addIngredientAndFocus = () => {
+    setRecipeIngredients((prev) => [...prev, '']);
+    setTimeout(
+      () => ingredientRefs.current[recipeIngredients.length]?.focus(),
+      0,
+    );
+  };
+
+  const addMethodAndFocus = () => {
+    setRecipeMethod((prev) => [...prev, '']);
+    setTimeout(() => methodRefs.current[recipeMethod.length]?.focus(), 0);
+  };
+
+  const onSubmitEditingIngredient = (index: number) => () => {
+    if (recipeIngredients[index].length === 0) {
+      if (recipeMethod.length === index + 1) {
+        return;
+      }
+      setRecipeIngredients((prev) => [
+        ...prev.slice(0, index),
+        ...prev.slice(index + 1),
+      ]);
+      return;
+    }
+    const nextRef = ingredientRefs.current[index + 1];
+    if (nextRef) {
+      nextRef.focus();
+      return;
+    }
+    addIngredientAndFocus();
+  };
+
+  const onSubmitEditingStep = (index: number) => () => {
+    if (recipeMethod[index].length === 0) {
+      if (recipeMethod.length === index + 1) {
+        return;
+      }
+      setRecipeMethod((prev) => [
+        ...prev.slice(0, index),
+        ...prev.slice(index + 1),
+      ]);
+      return;
+    }
+    const nextRef = methodRefs.current[index + 1];
+    if (nextRef) {
+      nextRef.focus();
+      return;
+    }
+    addMethodAndFocus();
+  };
+
   const updateRecipe = () => {
     if (!recipe) return;
     const now = new Date();
 
     saveRecipe({
-      id: recipeId,
+      ...recipe,
       name: recipeName,
       ingredients: recipeIngredients,
       method: recipeMethod,
-      createdAt: recipe.createdAt,
       modifiedAt: now,
     });
   };
@@ -156,8 +209,10 @@ export default function EditRecipeScreen() {
             style={styles.recipeName}
             onChangeText={setRecipeName}
             value={recipeName}
-            multiline
+            // multiline
             scrollEnabled={false}
+            returnKeyType='next'
+            onSubmitEditing={() => ingredientRefs.current[0]?.focus()}
           />
         </View>
         <View style={styles.section}>
@@ -169,20 +224,20 @@ export default function EditRecipeScreen() {
                 style={styles.ingredientRow}
               >
                 <TextInput
-                  multiline
+                  ref={(ref) => (ingredientRefs.current[index] = ref)}
+                  // multiline
                   scrollEnabled={false}
                   placeholder='Add ingredient...'
                   style={styles.textInput}
                   onChangeText={(text) => setIngredient(index)(text)}
                   value={ingredient}
+                  returnKeyType='next'
+                  onSubmitEditing={onSubmitEditingIngredient(index)}
+                  blurOnSubmit={false}
                 />
               </View>
             ))}
-            <Button
-              onPress={() => setRecipeIngredients((prev) => [...prev, ''])}
-            >
-              Add
-            </Button>
+            <Button onPress={addIngredientAndFocus}>Add</Button>
           </View>
         </View>
 
@@ -196,16 +251,27 @@ export default function EditRecipeScreen() {
               >
                 <Text>{`${index + 1}.`}</Text>
                 <TextInput
-                  multiline
+                  ref={(ref) => (methodRefs.current[index] = ref)}
                   scrollEnabled={false}
                   placeholder='Add step...'
                   style={styles.textInput}
                   onChangeText={(text) => setStep(index)(text)}
                   value={step}
+                  returnKeyType='next'
+                  onSubmitEditing={onSubmitEditingStep(index)}
+                  blurOnSubmit={false}
                 />
               </View>
             ))}
-            <Button onPress={() => setRecipeMethod((prev) => [...prev, ''])}>
+            <Button
+              onPress={() => {
+                setRecipeMethod((prev) => [...prev, '']);
+                setTimeout(
+                  () => methodRefs.current[recipeMethod.length]?.focus(),
+                  0,
+                );
+              }}
+            >
               Add
             </Button>
           </View>

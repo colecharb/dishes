@@ -10,6 +10,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { FontAwesome } from '@expo/vector-icons';
 import GradientOverlay from '@/components/GradientOverlay';
 import Ingredients from '@/components/recipe/Ingredients';
+import Method from '@/components/recipe/Method';
 
 const SPLASH_ICON = require('@/assets/images/splash-icon.png');
 
@@ -70,14 +71,7 @@ export default function RecipeScreen() {
       >
         <Ingredients ingredients={ingredients} />
 
-        <View style={styles.section}>
-          <Text style={styles.heading}>Preparation</Text>
-          <View style={styles.sectionContent}>
-            {method.map((step, index) => (
-              <Text key={step}>{`${index + 1}.  ${step}`}</Text>
-            ))}
-          </View>
-        </View>
+        <Method method={method} />
 
         <Image
           source={SPLASH_ICON}

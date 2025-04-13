@@ -1,29 +1,31 @@
-import { Ingredient } from '@/constants/Recipes';
+import { Step } from '@/constants/Recipes';
 import { useDishesTheme } from '@/constants/Theme';
 import { StyleSheet } from 'react-native';
 import { View } from '../Themed';
 import { Text } from 'react-native-paper';
 
 type Props = {
-  ingredients: Ingredient[];
+  method: Step[];
 };
 
-export default function IngredientsCard({ ingredients }: Props) {
+export default function Method({ method }: Props) {
   const styles = useStyles();
 
   return (
     <View style={styles.container}>
-      {/* <Text style={styles.title}>Ingredients</Text> */}
-      {ingredients.map(([amount, ingredient]) => (
+      <Text style={styles.title}>Preparation</Text>
+      {method.map((step, index) => (
         <View
-          key={ingredient}
+          key={`${step}`}
           style={styles.row}
         >
           <View style={{ flex: 1 }}>
-            <Text style={[styles.text, styles.amount]}>{amount}</Text>
+            <Text
+              style={[styles.text, styles.stepIndex]}
+            >{`${index + 1}.`}</Text>
           </View>
-          <View style={{ flex: 2 }}>
-            <Text style={[styles.text, styles.ingredient]}>{ingredient}</Text>
+          <View style={{ flex: 10 }}>
+            <Text style={[styles.text, styles.step]}>{step}</Text>
           </View>
         </View>
       ))}
@@ -35,11 +37,9 @@ const useStyles = () => {
   const { layout, colors } = useDishesTheme();
   return StyleSheet.create({
     container: {
-      padding: layout.spacer,
-      paddingVertical: layout.spacer * 2,
+      // padding: layout.spacer,
+      // paddingVertical: layout.spacer * 2,
       gap: layout.spacer,
-      backgroundColor: colors.secondary + '33',
-      borderRadius: layout.spacer,
     },
     title: {
       fontSize: 30,
@@ -57,11 +57,10 @@ const useStyles = () => {
       fontSize: 16,
       color: colors.onBackground,
     },
-    amount: {
+    stepIndex: {
       textAlign: 'right',
-      fontWeight: 'bold',
     },
-    ingredient: {
+    step: {
       textAlign: 'left',
     },
   });
