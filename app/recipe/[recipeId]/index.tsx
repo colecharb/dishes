@@ -9,6 +9,7 @@ import { useDishesTheme } from '@/constants/Theme';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { FontAwesome } from '@expo/vector-icons';
 import GradientOverlay from '@/components/GradientOverlay';
+import Ingredients from '@/components/recipe/Ingredients';
 
 const SPLASH_ICON = require('@/assets/images/splash-icon.png');
 
@@ -50,6 +51,8 @@ export default function RecipeScreen() {
     );
   }
 
+  const { ingredients, method } = recipe;
+
   return (
     <View style={styles.container}>
       <GradientOverlay
@@ -65,19 +68,12 @@ export default function RecipeScreen() {
         style={styles.scrollView}
         contentContainerStyle={styles.scrollViewContent}
       >
-        <View style={styles.section}>
-          <Text style={styles.heading}>Ingredients</Text>
-          <View style={styles.sectionContent}>
-            {recipe.ingredients.map((ingredient) => (
-              <Text key={ingredient}>{ingredient}</Text>
-            ))}
-          </View>
-        </View>
+        <Ingredients ingredients={ingredients} />
 
         <View style={styles.section}>
           <Text style={styles.heading}>Preparation</Text>
           <View style={styles.sectionContent}>
-            {recipe.method.map((step, index) => (
+            {method.map((step, index) => (
               <Text key={step}>{`${index + 1}.  ${step}`}</Text>
             ))}
           </View>
@@ -107,7 +103,7 @@ const useStyles = () => {
     scrollViewContent: {
       backgroundColor: colors.background,
       paddingHorizontal: layout.spacer,
-      paddingTop: layout.spacer,
+      paddingTop: layout.spacer * 2,
       paddingBottom: safeAreaInsets.bottom * 2,
       gap: layout.spacer * 2,
     },
