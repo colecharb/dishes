@@ -56,7 +56,7 @@ export default function Recipes() {
   const ingredientFilteredRecipes = searchQuery
     ? recipes.filter((recipe) =>
         recipe.ingredients.some((ingredient) =>
-          ingredient.includes(searchQuery.toLowerCase().trim()),
+          ingredient[1].includes(searchQuery.toLowerCase().trim()),
         ),
       )
     : [];
