@@ -11,6 +11,7 @@ const Layout = {
   borderWidth: 1,
 } as const;
 
+// colors used across all themes
 const dishesColors = {
   primary: '#FDB955',
   secondary: '#777777',
