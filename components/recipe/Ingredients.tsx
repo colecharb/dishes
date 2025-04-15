@@ -1,11 +1,11 @@
-import { Ingredient } from '@/constants/Recipes';
+import { IngredientEntry } from '@/constants/Recipes';
 import { useDishesTheme } from '@/constants/Theme';
 import { StyleSheet } from 'react-native';
 import { View } from '../Themed';
 import { Text } from 'react-native-paper';
 
 type Props = {
-  ingredients: Ingredient[];
+  ingredients: IngredientEntry[];
 };
 
 export default function IngredientsCard({ ingredients }: Props) {
@@ -14,15 +14,15 @@ export default function IngredientsCard({ ingredients }: Props) {
   return (
     <View style={styles.container}>
       {/* <Text style={styles.title}>Ingredients</Text> */}
-      {ingredients.map(([amount, ingredient]) => (
+      {ingredients.map(({ amount, ingredient }) => (
         <View
           key={ingredient}
           style={styles.row}
         >
-          <View style={{ flex: 1 }}>
+          <View style={styles.amountContainer}>
             <Text style={[styles.text, styles.amount]}>{amount}</Text>
           </View>
-          <View style={{ flex: 2 }}>
+          <View style={styles.ingredientContainer}>
             <Text style={[styles.text, styles.ingredient]}>{ingredient}</Text>
           </View>
         </View>
@@ -56,6 +56,13 @@ const useStyles = () => {
     text: {
       fontSize: 16,
       color: colors.onBackground,
+      paddingTop: 0,
+    },
+    amountContainer: {
+      flex: 1,
+    },
+    ingredientContainer: {
+      flex: 2,
     },
     amount: {
       textAlign: 'right',
@@ -66,3 +73,5 @@ const useStyles = () => {
     },
   });
 };
+
+export { useStyles };
