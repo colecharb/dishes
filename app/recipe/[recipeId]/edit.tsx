@@ -4,6 +4,7 @@ import {
   StyleSheet,
   TextInput,
   Alert,
+  Keyboard,
 } from 'react-native';
 import { View } from '@/components/Themed';
 import { Button, Text } from 'react-native-paper';
@@ -18,9 +19,18 @@ import useSetOptions from '@/hooks/useSetOptions';
 import useRecipes from '@/hooks/useRecipes';
 import useRecipe from '@/hooks/useRecipe';
 import { useDishesTheme } from '@/constants/Theme';
-import { NEW_RECIPE_ID } from '@/constants/Recipes';
+import { IngredientEntry, NEW_RECIPE_ID, Recipe } from '@/constants/Recipes';
+import { useStyles as useIngredientsStyles } from '@/components/recipe/Ingredients';
+import { useStyles as useMethodStyles } from '@/components/recipe/Method';
 
 const SPLASH_ICON = require('@/assets/images/splash-icon.png');
+
+// TODO: redo ingredient entry for new data shape
+
+const defaultIngredientEntry = {
+  amount: '',
+  ingredient: '',
+} as const;
 
 type Params = RootStackParamList['edit-recipe'];
 
@@ -32,10 +42,14 @@ export default function EditRecipeScreen() {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
   const [recipeName, setRecipeName] = useState<string>('');
-  const [recipeIngredients, setRecipeIngredients] = useState<string[]>(['']);
+  const [recipeIngredients, setRecipeIngredients] = useState<IngredientEntry[]>(
+    [{ ...defaultIngredientEntry }],
+  );
   const [recipeMethod, setRecipeMethod] = useState<string[]>(['']);
 
-  const ingredientRefs = useRef<(TextInput | null)[]>([]);
+  const ingredientRefs = useRef<
+    { amount: TextInput | null; item: TextInput | null }[]
+  >([]);
   const methodRefs = useRef<(TextInput | null)[]>([]);
 
   const [recipe] = useRecipe(recipeId);
@@ -48,13 +62,14 @@ export default function EditRecipeScreen() {
     setRecipeMethod((prev) => recipe?.method ?? prev);
   }, [recipe]);
 
-  const setIngredient = (index: number) => (ingredient: string) => {
-    setRecipeIngredients((prev) => [
-      ...prev.slice(0, index),
-      ingredient,
-      ...prev.slice(index + 1),
-    ]);
-  };
+  const setIngredient =
+    (index: number, field: keyof IngredientEntry) => (value: string) => {
+      setRecipeIngredients((prev) => [
+        ...prev.slice(0, index),
+        { ...prev[index], [field]: value },
+        ...prev.slice(index + 1),
+      ]);
+    };
 
   const setStep = (index: number) => (step: string) => {
     setRecipeMethod((prev) => [
@@ -65,9 +80,9 @@ export default function EditRecipeScreen() {
   };
 
   const addIngredientAndFocus = () => {
-    setRecipeIngredients((prev) => [...prev, '']);
+    setRecipeIngredients((prev) => [...prev, { ...defaultIngredientEntry }]);
     setTimeout(
-      () => ingredientRefs.current[recipeIngredients.length]?.focus(),
+      () => ingredientRefs.current[recipeIngredients.length]?.amount?.focus(),
       0,
     );
   };
@@ -77,28 +92,43 @@ export default function EditRecipeScreen() {
     setTimeout(() => methodRefs.current[recipeMethod.length]?.focus(), 0);
   };
 
-  const onSubmitEditingIngredient = (index: number) => () => {
-    if (recipeIngredients[index].length === 0) {
-      if (recipeMethod.length === index + 1) {
+  const onSubmitEditingName = () => {
+    setRecipeName((prev) => prev.trim());
+    ingredientRefs.current[0]?.amount?.focus();
+  };
+
+  const onSubmitEditingIngredient =
+    (index: number, field: 'amount' | 'item') => () => {
+      if (field === 'amount') {
+        // pressing enter on any amount field brings you to its ingredient field
+        ingredientRefs.current[index]?.item?.focus();
         return;
       }
-      setRecipeIngredients((prev) => [
-        ...prev.slice(0, index),
-        ...prev.slice(index + 1),
-      ]);
-      return;
-    }
-    const nextRef = ingredientRefs.current[index + 1];
-    if (nextRef) {
-      nextRef.focus();
-      return;
-    }
-    addIngredientAndFocus();
-  };
+      if (recipeIngredients[index].ingredient.length === 0) {
+        if (recipeIngredients.length === index + 1) {
+          // Pressing enter on the last ingredient when it's empty closes keyboard
+          Keyboard.dismiss();
+          return;
+        }
+        // Pressing enter on
+        setRecipeIngredients((prev) => [
+          ...prev.slice(0, index),
+          ...prev.slice(index + 1),
+        ]);
+        return;
+      }
+      const nextRef = ingredientRefs.current[index + 1]?.amount;
+      if (nextRef) {
+        nextRef.focus();
+        return;
+      }
+      addIngredientAndFocus();
+    };
 
   const onSubmitEditingStep = (index: number) => () => {
     if (recipeMethod[index].length === 0) {
       if (recipeMethod.length === index + 1) {
+        Keyboard.dismiss();
         return;
       }
       setRecipeMethod((prev) => [
@@ -107,6 +137,7 @@ export default function EditRecipeScreen() {
       ]);
       return;
     }
+    setStep(index)(recipeMethod[index].trim());
     const nextRef = methodRefs.current[index + 1];
     if (nextRef) {
       nextRef.focus();
@@ -115,25 +146,48 @@ export default function EditRecipeScreen() {
     addMethodAndFocus();
   };
 
+  /**
+   * Returns the recipe prepared for saving, minus date and ID fields:
+   * - removes empty ingredients and steps
+   * - copies the rest of the recipe as is
+   */
+  const getPreparedRecipe = (): Recipe | null => {
+    if (!recipe) {
+      return null;
+    }
+    const cleanIngredients = recipeIngredients.filter(
+      ({ ingredient }) => ingredient.trim().length > 0,
+    );
+    const cleanMethod = recipeMethod
+      .map((step) => step.trim())
+      .filter((step) => step.length > 0);
+
+    const cleanRecipe: Recipe = {
+      ...recipe,
+      name: recipeName,
+      ingredients: cleanIngredients,
+      method: cleanMethod,
+    };
+    return cleanRecipe;
+  };
+
   const updateRecipe = () => {
-    if (!recipe) return;
+    const preparedRecipe = getPreparedRecipe();
+    if (!preparedRecipe) return;
     const now = new Date();
 
     saveRecipe({
-      ...recipe,
-      name: recipeName,
-      ingredients: recipeIngredients,
-      method: recipeMethod,
+      ...preparedRecipe,
       modifiedAt: now,
     });
   };
   const createRecipe = () => {
+    const preparedRecipe = getPreparedRecipe();
+    if (!preparedRecipe) return;
     const now = new Date();
     saveRecipe({
+      ...preparedRecipe,
       id: uuid(),
-      name: recipeName,
-      ingredients: recipeIngredients,
-      method: recipeMethod,
       createdAt: now,
       modifiedAt: now,
     });
@@ -190,10 +244,12 @@ export default function EditRecipeScreen() {
   });
 
   const styles = useStyles();
+  const ingredientsStyles = useIngredientsStyles();
+  const methodStyles = useMethodStyles();
 
   return (
     <KeyboardAvoidingView
-      behavior='height'
+      behavior='padding'
       style={styles.keyboardAvoidingView}
     >
       <SafeAreaScrollView
@@ -203,78 +259,115 @@ export default function EditRecipeScreen() {
       >
         <View style={styles.section}>
           <TextInput
+            multiline
+            scrollEnabled={false}
             autoFocus={isNewRecipe}
             placeholder='Recipe Name'
             autoCapitalize='words'
             style={styles.recipeName}
             onChangeText={setRecipeName}
-            value={recipeName}
-            // multiline
-            scrollEnabled={false}
+            defaultValue={recipeName}
             returnKeyType='next'
-            onSubmitEditing={() => ingredientRefs.current[0]?.focus()}
+            onSubmitEditing={onSubmitEditingName}
+            submitBehavior='submit'
           />
         </View>
-        <View style={styles.section}>
-          <Text style={styles.heading}>Ingredients</Text>
-          <View style={styles.sectionContent}>
-            {recipeIngredients.map((ingredient, index) => (
-              <View
-                key={index}
-                style={styles.ingredientRow}
-              >
+        <View style={ingredientsStyles.container}>
+          {recipeIngredients.map(({ amount, ingredient }, index) => (
+            <View
+              key={index}
+              style={ingredientsStyles.row}
+            >
+              <View style={ingredientsStyles.amountContainer}>
                 <TextInput
-                  ref={(ref) => (ingredientRefs.current[index] = ref)}
-                  // multiline
+                  multiline
                   scrollEnabled={false}
-                  placeholder='Add ingredient...'
-                  style={styles.textInput}
-                  onChangeText={(text) => setIngredient(index)(text)}
-                  value={ingredient}
+                  ref={(ref) => {
+                    if (!ingredientRefs.current[index]) {
+                      ingredientRefs.current[index] = {
+                        amount: null,
+                        item: null,
+                      };
+                    }
+                    ingredientRefs.current[index].amount = ref;
+                  }}
+                  placeholder='qty.'
+                  style={[ingredientsStyles.text, ingredientsStyles.amount]}
+                  onChangeText={(text) => setIngredient(index, 'amount')(text)}
+                  defaultValue={amount}
                   returnKeyType='next'
-                  onSubmitEditing={onSubmitEditingIngredient(index)}
-                  blurOnSubmit={false}
+                  onSubmitEditing={onSubmitEditingIngredient(index, 'amount')}
+                  submitBehavior='submit'
                 />
               </View>
-            ))}
-            <Button onPress={addIngredientAndFocus}>Add</Button>
-          </View>
+              <View style={ingredientsStyles.ingredientContainer}>
+                <TextInput
+                  multiline
+                  scrollEnabled={false}
+                  ref={(ref) => {
+                    if (!ingredientRefs.current[index]) {
+                      ingredientRefs.current[index] = {
+                        amount: null,
+                        item: null,
+                      };
+                    }
+                    ingredientRefs.current[index].item = ref;
+                  }}
+                  placeholder='ingredient'
+                  style={[ingredientsStyles.text, ingredientsStyles.ingredient]}
+                  onChangeText={(text) =>
+                    setIngredient(index, 'ingredient')(text)
+                  }
+                  defaultValue={ingredient}
+                  returnKeyType='next'
+                  onSubmitEditing={onSubmitEditingIngredient(index, 'item')}
+                  submitBehavior='submit'
+                />
+              </View>
+            </View>
+          ))}
+          <Button onPress={addIngredientAndFocus}>Add</Button>
         </View>
 
-        <View style={styles.section}>
-          <Text style={styles.heading}>Preparation</Text>
-          <View style={styles.sectionContent}>
-            {recipeMethod.map((step, index) => (
-              <View
-                key={index}
-                style={styles.ingredientRow}
-              >
-                <Text>{`${index + 1}.`}</Text>
+        <View style={methodStyles.container}>
+          <Text style={methodStyles.title}>Preparation</Text>
+          {recipeMethod.map((step, index) => (
+            <View
+              key={index}
+              style={methodStyles.row}
+            >
+              <View style={methodStyles.stepIndexContainer}>
+                <Text
+                  style={[methodStyles.text, methodStyles.stepIndex]}
+                >{`${index + 1}.`}</Text>
+              </View>
+              <View style={methodStyles.stepContainer}>
                 <TextInput
-                  ref={(ref) => (methodRefs.current[index] = ref)}
+                  multiline
                   scrollEnabled={false}
+                  ref={(ref) => (methodRefs.current[index] = ref)}
                   placeholder='Add step...'
-                  style={styles.textInput}
+                  style={[methodStyles.text, methodStyles.step]}
                   onChangeText={(text) => setStep(index)(text)}
-                  value={step}
+                  defaultValue={step}
                   returnKeyType='next'
                   onSubmitEditing={onSubmitEditingStep(index)}
-                  blurOnSubmit={false}
+                  submitBehavior='submit'
                 />
               </View>
-            ))}
-            <Button
-              onPress={() => {
-                setRecipeMethod((prev) => [...prev, '']);
-                setTimeout(
-                  () => methodRefs.current[recipeMethod.length]?.focus(),
-                  0,
-                );
-              }}
-            >
-              Add
-            </Button>
-          </View>
+            </View>
+          ))}
+          <Button
+            onPress={() => {
+              setRecipeMethod((prev) => [...prev, '']);
+              setTimeout(
+                () => methodRefs.current[recipeMethod.length]?.focus(),
+                0,
+              );
+            }}
+          >
+            Add
+          </Button>
         </View>
 
         <Image
@@ -335,8 +428,14 @@ const useStyles = () => {
       fontWeight: 200,
     },
     textInput: {
-      flex: 1,
       color: colors.onBackground,
+      fontSize: 16,
+    },
+    amountInput: {
+      flex: 1,
+    },
+    ingredientInput: {
+      flex: 2,
     },
     dishesImage: {
       aspectRatio: 1,
