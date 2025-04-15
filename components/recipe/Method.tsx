@@ -19,12 +19,12 @@ export default function Method({ method }: Props) {
           key={`${step}`}
           style={styles.row}
         >
-          <View style={{ flex: 1 }}>
+          <View style={styles.stepIndexContainer}>
             <Text
               style={[styles.text, styles.stepIndex]}
             >{`${index + 1}.`}</Text>
           </View>
-          <View style={{ flex: 10 }}>
+          <View style={styles.stepContainer}>
             <Text style={[styles.text, styles.step]}>{step}</Text>
           </View>
         </View>
@@ -54,8 +54,17 @@ const useStyles = () => {
       // alignItems: 'center',
     },
     text: {
+      // borderWidth: 1,
+      // borderColor: 'red',
+      paddingTop: 0,
       fontSize: 16,
       color: colors.onBackground,
+    },
+    stepIndexContainer: {
+      flex: 1,
+    },
+    stepContainer: {
+      flex: 10,
     },
     stepIndex: {
       textAlign: 'right',
@@ -65,3 +74,5 @@ const useStyles = () => {
     },
   });
 };
+
+export { useStyles };
