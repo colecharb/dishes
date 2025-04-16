@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import { View } from '../Themed';
 import { Text } from 'react-native-paper';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 type Props = {
   method: Step[];
@@ -17,13 +17,19 @@ type Props = {
 
 export default function Method({ method }: Props) {
   const [activeStepIndex, setActiveStepIndex] = useState<number>();
-  const animations = useRef(method.map(() => new Animated.Value(0))).current;
-
   const styles = useStyles();
+
+  const animationsRef = useRef(method.map(() => new Animated.Value(0)));
+
+  useEffect(() => {
+    console.log('Method: useEffect');
+
+    animationsRef.current = method.map(() => new Animated.Value(0));
+  }, [method, method.length]);
 
   const animateStep = (index: number, toValue: number) => {
     InteractionManager.runAfterInteractions(() => {
-      Animated.timing(animations[index], {
+      Animated.timing(animationsRef.current[index], {
         toValue,
         duration: 200,
         easing: Easing.inOut(Easing.ease),
@@ -54,28 +60,31 @@ export default function Method({ method }: Props) {
     <View style={styles.container}>
       <Text style={styles.title}>Preparation</Text>
       {method.map((step, index) => {
-        const animation = animations[index];
+        const animation = animationsRef.current[index];
 
         const animatedStyle = {
-          backgroundColor: styles.activeStep.backgroundColor,
-          borderRadius: styles.activeStep.borderRadius,
-          paddingVertical: animation.interpolate({
+          ...styles.activeStep,
+          borderWidth: animation?.interpolate({
+            inputRange: [0, 1],
+            outputRange: [0, styles.activeStep.borderWidth],
+          }),
+          paddingVertical: animation?.interpolate({
             inputRange: [0, 1],
             outputRange: [0, styles.activeStep.paddingVertical],
           }),
-          shadowColor: styles.activeStep.shadowColor,
           shadowOffset: styles.activeStep.shadowOffset,
-          shadowOpacity: animation.interpolate({
+          shadowOpacity: animation?.interpolate({
             inputRange: [0, 1],
             outputRange: [0, styles.activeStep.shadowOpacity], // use a fallback if undefined
           }),
-          shadowRadius: styles.activeStep.shadowRadius,
         };
 
         return (
           <Pressable
             key={index}
             onPress={onPressStep(index)}
+            // following zIndex condition keep shadow on top of other steps
+            style={{ zIndex: activeStepIndex === index ? 10 : 1 }}
           >
             <Animated.View style={[styles.row, animatedStyle]}>
               <View style={styles.stepIndexContainer}>
@@ -110,10 +119,13 @@ const useStyles = () => {
       justifyContent: 'space-between',
       flexDirection: 'row',
       gap: layout.spacer,
+      paddingHorizontal: layout.spacer,
     },
     activeStep: {
       paddingVertical: layout.spacer,
       borderRadius: layout.spacer / 2,
+      borderColor: colors.primary,
+      borderWidth: layout.borderWidth,
       backgroundColor: colors.background,
       shadowColor: colors.shadow,
       shadowOffset: layout.shadowOffset,

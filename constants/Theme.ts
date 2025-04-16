@@ -8,15 +8,15 @@ import { MD3Colors } from 'react-native-paper/lib/typescript/types';
 
 const layout = {
   spacer: 16,
-  borderWidth: 1,
+  borderWidth: 2,
   shadowOffset: { width: 0, height: 0 },
   shadowRadius: 12,
-  shadowOpacity: 0.4,
+  shadowOpacity: 0.5,
 } as const;
 
 // colors used across all themes
 const dishesColors = {
-  primary: '#FDB955',
+  primary: '#DA9E2F',
   secondary: '#7F7F7F',
   danger: '#FF0000',
 

@@ -17,7 +17,6 @@ import {
 import { NEW_RECIPE_ID, type Recipe } from '@/constants/Recipes';
 import RecipeListItem from '@/components/RecipeListItem';
 import { useRef, useState } from 'react';
-import { StatusBar } from 'expo-status-bar';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { View } from '@/components/Themed';
 import { Text } from 'react-native-paper';
