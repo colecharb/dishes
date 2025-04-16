@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import { View } from '../Themed';
 import { Text } from 'react-native-paper';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 type Props = {
   method: Step[];
@@ -17,13 +17,19 @@ type Props = {
 
 export default function Method({ method }: Props) {
   const [activeStepIndex, setActiveStepIndex] = useState<number>();
-  const animations = useRef(method.map(() => new Animated.Value(0))).current;
-
   const styles = useStyles();
+
+  const animationsRef = useRef(method.map(() => new Animated.Value(0)));
+
+  useEffect(() => {
+    console.log('Method: useEffect');
+
+    animationsRef.current = method.map(() => new Animated.Value(0));
+  }, [method, method.length]);
 
   const animateStep = (index: number, toValue: number) => {
     InteractionManager.runAfterInteractions(() => {
-      Animated.timing(animations[index], {
+      Animated.timing(animationsRef.current[index], {
         toValue,
         duration: 200,
         easing: Easing.inOut(Easing.ease),
@@ -54,20 +60,20 @@ export default function Method({ method }: Props) {
     <View style={styles.container}>
       <Text style={styles.title}>Preparation</Text>
       {method.map((step, index) => {
-        const animation = animations[index];
+        const animation = animationsRef.current[index];
 
         const animatedStyle = {
           ...styles.activeStep,
-          borderWidth: animation.interpolate({
+          borderWidth: animation?.interpolate({
             inputRange: [0, 1],
             outputRange: [0, styles.activeStep.borderWidth],
           }),
-          paddingVertical: animation.interpolate({
+          paddingVertical: animation?.interpolate({
             inputRange: [0, 1],
             outputRange: [0, styles.activeStep.paddingVertical],
           }),
           shadowOffset: styles.activeStep.shadowOffset,
-          shadowOpacity: animation.interpolate({
+          shadowOpacity: animation?.interpolate({
             inputRange: [0, 1],
             outputRange: [0, styles.activeStep.shadowOpacity], // use a fallback if undefined
           }),
@@ -113,6 +119,7 @@ const useStyles = () => {
       justifyContent: 'space-between',
       flexDirection: 'row',
       gap: layout.spacer,
+      paddingHorizontal: layout.spacer,
     },
     activeStep: {
       paddingVertical: layout.spacer,
@@ -124,7 +131,6 @@ const useStyles = () => {
       shadowOffset: layout.shadowOffset,
       shadowOpacity: layout.shadowOpacity,
       shadowRadius: layout.shadowRadius,
-      zIndex: 10,
     },
     text: {
       paddingTop: 0,
