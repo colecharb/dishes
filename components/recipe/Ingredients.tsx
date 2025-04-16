@@ -18,20 +18,20 @@ export default function IngredientsCard({ ingredients }: Props) {
       {/* <View style={[styles.line, styles.redLine]} /> */}
 
       {ingredients.map(({ amount, ingredient }) => (
-        <>
-          <View
-            key={ingredient}
-            style={styles.row}
-          >
-            <View style={styles.amountContainer}>
-              <Text style={[styles.text, styles.amount]}>{amount}</Text>
-            </View>
-            <View style={styles.ingredientContainer}>
-              <Text style={[styles.text, styles.ingredient]}>{ingredient}</Text>
-            </View>
+        // <>
+        <View
+          key={ingredient}
+          style={styles.row}
+        >
+          <View style={styles.amountContainer}>
+            <Text style={[styles.text, styles.amount]}>{amount}</Text>
           </View>
-          {/* <View style={[styles.line, styles.blueLine]} /> */}
-        </>
+          <View style={styles.ingredientContainer}>
+            <Text style={[styles.text, styles.ingredient]}>{ingredient}</Text>
+          </View>
+        </View>
+        // {/* <View style={[styles.line, styles.blueLine]} /> */}
+        // </>
       ))}
     </View>
   );
