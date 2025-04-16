@@ -5,8 +5,6 @@
 
 import { Text as DefaultText, View as DefaultView } from 'react-native';
 
-import { useDishesTheme } from '@/constants/Theme';
-
 type ThemeProps = {
   lightColor?: string;
   darkColor?: string;
@@ -16,13 +14,13 @@ export type TextProps = ThemeProps & DefaultText['props'];
 export type ViewProps = ThemeProps & DefaultView['props'];
 
 export function View(props: ViewProps) {
-  const { colors } = useDishesTheme();
+  // const { colors } = useDishesTheme();
 
   const { style, lightColor, darkColor, ...otherProps } = props;
 
   return (
     <DefaultView
-      style={[{ backgroundColor: colors.background }, style]}
+      style={[{ backgroundColor: 'transparent' }, style]}
       {...otherProps}
     />
   );

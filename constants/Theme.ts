@@ -6,15 +6,22 @@
 import { MD3DarkTheme, MD3LightTheme, useTheme } from 'react-native-paper';
 import { MD3Colors } from 'react-native-paper/lib/typescript/types';
 
-const Layout = {
+const layout = {
   spacer: 16,
   borderWidth: 1,
+  shadowOffset: { width: 0, height: 0 },
+  shadowRadius: 12,
+  shadowOpacity: 0.4,
 } as const;
 
+// colors used across all themes
 const dishesColors = {
   primary: '#FDB955',
-  secondary: '#777777',
+  secondary: '#7F7F7F',
   danger: '#FF0000',
+
+  indexCardRed: '#EE606050',
+  indexCardBlue: '#6060EE50',
 } as const;
 
 // Colors present in both themes
@@ -24,10 +31,13 @@ const commonColors: Partial<MD3Colors> & typeof dishesColors = {
 
 const dishesTheme = {
   ...MD3DarkTheme,
-  layout: Layout,
+  layout: layout,
   colors: {
     ...MD3DarkTheme.colors,
     background: '#000000',
+    onBackground: '#FFFFFF',
+    surface: '#000000',
+    shadow: '#FFFFFF',
     ...commonColors,
   },
   fonts: {
@@ -41,7 +51,10 @@ const lightTheme: DishesTheme = {
   ...dishesTheme,
   colors: {
     ...MD3LightTheme.colors,
-    background: '#ffffff',
+    background: '#FFFFFF',
+    onBackground: '#000000',
+    surface: '#FFFFFF',
+    shadow: '#000000',
     ...commonColors,
   },
   fonts: {

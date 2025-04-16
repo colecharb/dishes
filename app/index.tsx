@@ -55,8 +55,8 @@ export default function Recipes() {
 
   const ingredientFilteredRecipes = searchQuery
     ? recipes.filter((recipe) =>
-        recipe.ingredients.some((ingredient) =>
-          ingredient.includes(searchQuery.toLowerCase().trim()),
+        recipe.ingredients.some((ingredientEntry) =>
+          ingredientEntry.ingredient.includes(searchQuery.toLowerCase().trim()),
         ),
       )
     : [];
@@ -112,12 +112,12 @@ export default function Recipes() {
   );
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={styles.container}>
       <KeyboardAvoidingView
         style={styles.keyboardAvoidingView}
         behavior='height'
       >
-        <StatusBar hidden />
+        {/* <StatusBar hidden /> */}
 
         <GradientOverlay
           colors={[
@@ -126,12 +126,12 @@ export default function Recipes() {
             colors.background + '00', // background + transparency
             colors.background + '00',
           ]}
-          locations={[0, 0.04, 0.25, 1]}
+          locations={[0, 0.07, 0.3, 1]}
         />
 
         {!keyboardVisible && (
           <View
-            pointerEvents='auto'
+            // pointerEvents='box-none'
             style={styles.settingsButtonContainer}
           >
             <Link
@@ -234,13 +234,18 @@ const useStyles = () => {
   const footerHeight = screenHeight / 3;
 
   return StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors.background,
+    },
     settingsButtonContainer: {
+      marginTop: safeAreaInsets.top,
       zIndex: 10,
     },
     settingsButton: {
       position: 'absolute',
       color: colors.onBackground,
-      margin: layout.spacer * 1.5,
+      margin: layout.spacer,
       flexDirection: 'row',
     },
     flatList: {
@@ -292,7 +297,6 @@ const useStyles = () => {
       fontWeight: 900,
       fontStyle: 'italic',
     },
-    searchBarClearButton: {},
     bottomButtonsContainer: {
       flexDirection: 'row',
       justifyContent: 'space-between',

@@ -9,6 +9,10 @@ import { useDishesTheme } from '@/constants/Theme';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { FontAwesome } from '@expo/vector-icons';
 import GradientOverlay from '@/components/GradientOverlay';
+import Ingredients from '@/components/recipe/Ingredients';
+import Method from '@/components/recipe/Method';
+import { useState } from 'react';
+import formatDate from '@/helpers/formatDate.helper';
 
 const SPLASH_ICON = require('@/assets/images/splash-icon.png');
 
@@ -18,6 +22,8 @@ export default function RecipeScreen() {
   const { layout, colors } = useDishesTheme();
   const { recipeId } = useLocalSearchParams<Params>();
   const [recipe] = useRecipe(recipeId);
+
+  const [showDates, setShowDates] = useState(false);
 
   const EditButton = () => (
     <Link
@@ -50,6 +56,8 @@ export default function RecipeScreen() {
     );
   }
 
+  const { ingredients, method, createdAt, modifiedAt } = recipe;
+
   return (
     <View style={styles.container}>
       <GradientOverlay
@@ -61,27 +69,47 @@ export default function RecipeScreen() {
         ]}
         locations={[0, 0.05, 0.8, 1]}
       />
+
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.scrollViewContent}
+        onScroll={({ nativeEvent }) => {
+          setShowDates(nativeEvent.contentOffset.y < 0);
+        }}
+        // scrollEventThrottle={16}
       >
-        <View style={styles.section}>
-          <Text style={styles.heading}>Ingredients</Text>
-          <View style={styles.sectionContent}>
-            {recipe.ingredients.map((ingredient) => (
-              <Text key={ingredient}>{ingredient}</Text>
-            ))}
+        {showDates && (
+          <View style={styles.dateContainer}>
+            <View style={[styles.dateRow, styles.createdRow]}>
+              <View style={styles.dateTextContainer}>
+                <Text style={[styles.dateText, styles.dateLabel]}>
+                  Created:
+                </Text>
+              </View>
+              <View style={[styles.dateTextContainer, { flexShrink: 2 }]}>
+                <Text style={[styles.dateText, styles.dateValue]}>
+                  {formatDate(createdAt)}
+                </Text>
+              </View>
+            </View>
+            <View style={[styles.dateRow, styles.dateBox]}>
+              <View style={styles.dateTextContainer}>
+                <Text style={[styles.dateText, styles.dateLabel]}>
+                  Modified:
+                </Text>
+              </View>
+              <View style={[styles.dateTextContainer, { flexShrink: 2 }]}>
+                <Text style={[styles.dateText, styles.dateValue]}>
+                  {formatDate(modifiedAt)}
+                </Text>
+              </View>
+            </View>
           </View>
-        </View>
+        )}
 
-        <View style={styles.section}>
-          <Text style={styles.heading}>Preparation</Text>
-          <View style={styles.sectionContent}>
-            {recipe.method.map((step, index) => (
-              <Text key={step}>{`${index + 1}.  ${step}`}</Text>
-            ))}
-          </View>
-        </View>
+        <Ingredients ingredients={ingredients} />
+
+        <Method method={method} />
 
         <Image
           source={SPLASH_ICON}
@@ -107,23 +135,48 @@ const useStyles = () => {
     scrollViewContent: {
       backgroundColor: colors.background,
       paddingHorizontal: layout.spacer,
-      paddingTop: layout.spacer,
+      paddingTop: layout.spacer * 2,
       paddingBottom: safeAreaInsets.bottom * 2,
       gap: layout.spacer * 2,
     },
-    recipeName: {
-      fontSize: 35,
-      fontWeight: 900,
-    },
-    section: {
-      gap: layout.spacer,
-    },
-    sectionContent: {
+    dateContainer: {
+      position: 'absolute',
+      top: -64,
+      alignSelf: 'center',
       gap: layout.spacer / 2,
     },
-    heading: {
-      fontSize: 30,
-      fontWeight: 200,
+    dateBox: {
+      backgroundColor: colors.background,
+      opacity: 1,
+      padding: layout.spacer / 2,
+      borderRadius: layout.spacer / 2,
+      borderWidth: layout.borderWidth,
+      borderColor: colors.secondary,
+      gap: layout.spacer / 2,
+    },
+    dateRow: {
+      flexDirection: 'row',
+      justifyContent: 'center',
+      gap: layout.spacer / 2,
+    },
+    createdRow: {
+      opacity: 0.75,
+    },
+    dateTextContainer: {
+      flexShrink: 1,
+    },
+    dateText: {
+      fontSize: 14,
+      fontWeight: 'bold',
+      color: colors.secondary,
+    },
+    dateLabel: {
+      textAlign: 'right',
+      flexShrink: 1,
+    },
+    dateValue: {
+      // flex: 2,
+      textAlign: 'left',
     },
     dishesImage: {
       aspectRatio: 1,

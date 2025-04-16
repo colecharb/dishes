@@ -83,13 +83,14 @@ export default function ModalScreen() {
 }
 
 const useStyles = () => {
-  const { layout } = useDishesTheme();
+  const { layout, colors } = useDishesTheme();
   return StyleSheet.create({
     container: {
       flex: 1,
       alignItems: 'center',
       justifyContent: 'center',
       gap: layout.spacer,
+      backgroundColor: colors.background,
     },
     title: {
       fontSize: 20,
