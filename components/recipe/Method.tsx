@@ -57,25 +57,28 @@ export default function Method({ method }: Props) {
         const animation = animations[index];
 
         const animatedStyle = {
-          backgroundColor: styles.activeStep.backgroundColor,
-          borderRadius: styles.activeStep.borderRadius,
+          ...styles.activeStep,
+          borderWidth: animation.interpolate({
+            inputRange: [0, 1],
+            outputRange: [0, styles.activeStep.borderWidth],
+          }),
           paddingVertical: animation.interpolate({
             inputRange: [0, 1],
             outputRange: [0, styles.activeStep.paddingVertical],
           }),
-          shadowColor: styles.activeStep.shadowColor,
           shadowOffset: styles.activeStep.shadowOffset,
           shadowOpacity: animation.interpolate({
             inputRange: [0, 1],
             outputRange: [0, styles.activeStep.shadowOpacity], // use a fallback if undefined
           }),
-          shadowRadius: styles.activeStep.shadowRadius,
         };
 
         return (
           <Pressable
             key={index}
             onPress={onPressStep(index)}
+            // following zIndex condition keep shadow on top of other steps
+            style={{ zIndex: activeStepIndex === index ? 10 : 1 }}
           >
             <Animated.View style={[styles.row, animatedStyle]}>
               <View style={styles.stepIndexContainer}>
@@ -114,11 +117,14 @@ const useStyles = () => {
     activeStep: {
       paddingVertical: layout.spacer,
       borderRadius: layout.spacer / 2,
+      borderColor: colors.primary,
+      borderWidth: layout.borderWidth,
       backgroundColor: colors.background,
       shadowColor: colors.shadow,
       shadowOffset: layout.shadowOffset,
       shadowOpacity: layout.shadowOpacity,
       shadowRadius: layout.shadowRadius,
+      zIndex: 10,
     },
     text: {
       paddingTop: 0,
