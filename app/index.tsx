@@ -230,7 +230,6 @@ export default function Recipes() {
 const useStyles = () => {
   const { layout, colors } = useDishesTheme();
   const safeAreaInsets = useSafeAreaInsets();
-
   const { height: screenHeight } = Dimensions.get('screen');
 
   const footerHeight = screenHeight / 3;
