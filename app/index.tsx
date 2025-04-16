@@ -117,7 +117,7 @@ export default function Recipes() {
         style={styles.keyboardAvoidingView}
         behavior='height'
       >
-        <StatusBar hidden />
+        {/* <StatusBar hidden /> */}
 
         <GradientOverlay
           colors={[
@@ -126,12 +126,12 @@ export default function Recipes() {
             colors.background + '00', // background + transparency
             colors.background + '00',
           ]}
-          locations={[0, 0.04, 0.25, 1]}
+          locations={[0, 0.07, 0.3, 1]}
         />
 
         {!keyboardVisible && (
           <View
-            pointerEvents='auto'
+            // pointerEvents='box-none'
             style={styles.settingsButtonContainer}
           >
             <Link
@@ -239,12 +239,13 @@ const useStyles = () => {
       backgroundColor: colors.background,
     },
     settingsButtonContainer: {
+      marginTop: safeAreaInsets.top,
       zIndex: 10,
     },
     settingsButton: {
       position: 'absolute',
       color: colors.onBackground,
-      margin: layout.spacer * 1.5,
+      margin: layout.spacer,
       flexDirection: 'row',
     },
     flatList: {
