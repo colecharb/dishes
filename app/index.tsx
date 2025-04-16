@@ -190,6 +190,7 @@ export default function Recipes() {
         >
           <View style={[styles.searchBarContainer]}>
             <TextInput
+              autoCorrect={false}
               autoCapitalize='none'
               ref={searchInputRef}
               selectionColor={'white'}
