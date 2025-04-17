@@ -33,11 +33,6 @@ export default function Method({ method }: Props) {
         toValue,
         duration: 200,
         easing: Easing.inOut(Easing.ease),
-
-        // stiffness: 300, // You can tweak these
-        // damping: 30,
-        // mass: 1,
-
         useNativeDriver: false, // useNativeDriver must be false for backgroundColor
       }).start();
     });
@@ -67,6 +62,14 @@ export default function Method({ method }: Props) {
           borderWidth: animation?.interpolate({
             inputRange: [0, 1],
             outputRange: [0, styles.activeStep.borderWidth],
+          }),
+          paddingHorizontal: animation?.interpolate({
+            inputRange: [0, 1],
+            outputRange: [
+              styles.activeStep.paddingHorizontal,
+              styles.activeStep.paddingHorizontal -
+                styles.activeStep.borderWidth,
+            ],
           }),
           paddingVertical: animation?.interpolate({
             inputRange: [0, 1],
@@ -123,7 +126,8 @@ const useStyles = () => {
     },
     activeStep: {
       paddingVertical: layout.spacer,
-      borderRadius: layout.spacer / 2,
+      paddingHorizontal: layout.spacer,
+      borderRadius: layout.spacer,
       borderColor: colors.primary,
       borderWidth: layout.borderWidth,
       backgroundColor: colors.background,
