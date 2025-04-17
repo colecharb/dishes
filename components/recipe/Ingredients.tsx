@@ -1,14 +1,27 @@
 import { IngredientEntry } from '@/constants/Recipes';
 import { useDishesTheme } from '@/constants/Theme';
-import { StyleSheet } from 'react-native';
+import { Pressable, StyleSheet } from 'react-native';
 import { View } from '../Themed';
 import { Text } from 'react-native-paper';
+import { useState } from 'react';
 
 type Props = {
   ingredients: IngredientEntry[];
 };
 
 export default function IngredientsCard({ ingredients }: Props) {
+  const [checkedIngredients, setCheckedIngredients] = useState(
+    Array(ingredients.length).fill(false),
+  );
+
+  const toggleCheckForIngredient = (index: number) => () => {
+    setCheckedIngredients((prev) => [
+      ...prev.slice(0, index),
+      !prev[index],
+      ...prev.slice(index + 1),
+    ]);
+  };
+
   const styles = useStyles();
 
   return (
@@ -17,22 +30,42 @@ export default function IngredientsCard({ ingredients }: Props) {
 
       {/* <View style={[styles.line, styles.redLine]} /> */}
 
-      {ingredients.map(({ amount, ingredient }) => (
-        // <>
-        <View
-          key={ingredient}
-          style={styles.row}
-        >
-          <View style={styles.amountContainer}>
-            <Text style={[styles.text, styles.amount]}>{amount}</Text>
-          </View>
-          <View style={styles.ingredientContainer}>
-            <Text style={[styles.text, styles.ingredient]}>{ingredient}</Text>
-          </View>
-        </View>
-        // {/* <View style={[styles.line, styles.blueLine]} /> */}
-        // </>
-      ))}
+      {ingredients.map(({ amount, ingredient }, index) => {
+        const isChecked = checkedIngredients[index];
+        return (
+          // <>
+          <Pressable
+            onPress={toggleCheckForIngredient(index)}
+            key={ingredient}
+            style={styles.row}
+          >
+            <View style={styles.amountContainer}>
+              <Text
+                style={[
+                  styles.text,
+                  styles.amount,
+                  isChecked && styles.checkedText,
+                ]}
+              >
+                {amount}
+              </Text>
+            </View>
+            <View style={styles.ingredientContainer}>
+              <Text
+                style={[
+                  styles.text,
+                  styles.ingredient,
+                  isChecked && styles.checkedText,
+                ]}
+              >
+                {ingredient}
+              </Text>
+            </View>
+          </Pressable>
+          // {/* <View style={[styles.line, styles.blueLine]} /> */}
+          // </>
+        );
+      })}
     </View>
   );
 }
@@ -70,6 +103,10 @@ const useStyles = () => {
       fontSize: 16,
       color: colors.onBackground,
       paddingTop: 0,
+    },
+    checkedText: {
+      textDecorationLine: 'line-through',
+      color: colors.secondary,
     },
     amountContainer: {
       flex: 1,
