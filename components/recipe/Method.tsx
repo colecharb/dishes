@@ -22,8 +22,6 @@ export default function Method({ method }: Props) {
   const animationsRef = useRef(method.map(() => new Animated.Value(0)));
 
   useEffect(() => {
-    console.log('Method: useEffect');
-
     animationsRef.current = method.map(() => new Animated.Value(0));
   }, [method, method.length]);
 
