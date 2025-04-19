@@ -16,8 +16,9 @@ const useRecipes = () => {
     fetchRecipes();
   }, [fetchRecipes]);
 
-  const saveRecipe = (recipe: Recipe) =>
+  const saveRecipe = (recipe: Recipe) => {
     RecipeStorage.save(recipe).then(fetchRecipes);
+  };
 
   const deleteRecipe = (recipeId: string) =>
     RecipeStorage.delete(recipeId).then(fetchRecipes);
