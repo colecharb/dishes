@@ -19,7 +19,11 @@ import useSetOptions from '@/hooks/useSetOptions';
 import useRecipes from '@/hooks/useRecipes';
 import useRecipe from '@/hooks/useRecipe';
 import { useDishesTheme } from '@/constants/Theme';
-import { IngredientEntry, NEW_RECIPE_ID, Recipe } from '@/constants/Recipes';
+import {
+  IngredientEntry,
+  NEW_RECIPE_ID,
+  RecipeContent,
+} from '@/constants/Recipes';
 import { useStyles as useIngredientsStyles } from '@/components/recipe/Ingredients';
 import { useStyles as useMethodStyles } from '@/components/recipe/Method';
 
@@ -151,10 +155,10 @@ export default function EditRecipeScreen() {
    * - removes empty ingredients and steps
    * - copies the rest of the recipe as is
    */
-  const getPreparedRecipe = (): Recipe | null => {
-    if (!recipe) {
-      return null;
-    }
+
+  const getPreparedRecipeContent = (): RecipeContent | null => {
+    if (!recipeId) return null;
+
     const cleanIngredients = recipeIngredients.filter(
       ({ ingredient }) => ingredient.trim().length > 0,
     );
@@ -162,29 +166,35 @@ export default function EditRecipeScreen() {
       .map((step) => step.trim())
       .filter((step) => step.length > 0);
 
-    const cleanRecipe: Recipe = {
-      ...recipe,
+    const cleanRecipeContent: RecipeContent = {
       name: recipeName,
       ingredients: cleanIngredients,
       method: cleanMethod,
     };
-    return cleanRecipe;
+    return cleanRecipeContent;
   };
 
   const updateRecipe = () => {
-    const preparedRecipe = getPreparedRecipe();
-    if (!preparedRecipe) return;
+    const preparedRecipe = getPreparedRecipeContent();
+
+    if (!recipe || !preparedRecipe) {
+      return;
+    }
+
     const now = new Date();
 
     saveRecipe({
+      ...recipe,
       ...preparedRecipe,
       modifiedAt: now,
     });
   };
+
   const createRecipe = () => {
-    const preparedRecipe = getPreparedRecipe();
+    const preparedRecipe = getPreparedRecipeContent();
     if (!preparedRecipe) return;
     const now = new Date();
+
     saveRecipe({
       ...preparedRecipe,
       id: uuid(),
@@ -217,9 +227,13 @@ export default function EditRecipeScreen() {
     );
   };
 
-  const onPressSaveRecipe = isNewRecipe
-    ? () => createRecipe()
-    : () => updateRecipe();
+  const onPressSaveRecipe = () => {
+    if (isNewRecipe) {
+      createRecipe();
+    } else {
+      updateRecipe();
+    }
+  };
 
   const CancelButton = () => (
     <Link href='..'>
