@@ -12,6 +12,7 @@ export default function ModalScreen() {
   const { reloadRecipes } = useRecipes();
   const navigation = useNavigation();
   const styles = useStyles();
+
   const onPressAddDummyRecipes = () => {
     RecipeStorage.saveMultiple(RECIPES)
       .then(reloadRecipes)
