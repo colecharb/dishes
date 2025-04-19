@@ -4,11 +4,14 @@ type IngredientEntry = {
 };
 type Step = string;
 
-type RecipeBase = {
-  id: string;
+type RecipeContent = {
   name: string;
   ingredients: IngredientEntry[];
   method: Step[];
+};
+
+type RecipeBase = RecipeContent & {
+  id: string;
 };
 
 // Recipe sa parsed from AsyncStorage
@@ -350,5 +353,5 @@ const RECIPES: Recipe[] = [
   },
 ];
 
-export type { IngredientEntry, Step, RecipeRaw, Recipe };
+export type { IngredientEntry, Step, RecipeContent, RecipeRaw, Recipe };
 export { RECIPES, NEW_RECIPE_ID };
