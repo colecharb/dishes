@@ -116,8 +116,6 @@ export default function Recipes() {
         style={styles.keyboardAvoidingView}
         behavior='height'
       >
-        {/* <StatusBar hidden /> */}
-
         <GradientOverlay
           colors={[
             colors.background,
