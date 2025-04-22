@@ -46,14 +46,18 @@ export default function Recipes() {
 
   const { recipes } = useRecipes();
 
+  const sortedRecipes = [...recipes].sort(
+    (a, b) => b.modifiedAt.getTime() - a.modifiedAt.getTime(),
+  );
+
   const titleFilteredRecipes = searchQuery
-    ? recipes.filter((recipe) =>
+    ? sortedRecipes.filter((recipe) =>
         recipe.name.toLowerCase().includes(searchQuery.toLowerCase().trim()),
       )
     : [];
 
   const ingredientFilteredRecipes = searchQuery
-    ? recipes.filter((recipe) =>
+    ? sortedRecipes.filter((recipe) =>
         recipe.ingredients.some((ingredientEntry) =>
           ingredientEntry.ingredient.includes(searchQuery.toLowerCase().trim()),
         ),
@@ -116,8 +120,6 @@ export default function Recipes() {
         style={styles.keyboardAvoidingView}
         behavior='height'
       >
-        {/* <StatusBar hidden /> */}
-
         <GradientOverlay
           colors={[
             colors.background,
@@ -170,7 +172,7 @@ export default function Recipes() {
             contentInset={{ bottom: safeAreaInsets.top }}
             style={styles.flatList}
             contentContainerStyle={styles.flatListContentContainer}
-            data={recipes}
+            data={sortedRecipes}
             keyExtractor={(r) => r.id}
             renderItem={renderItem}
             showsVerticalScrollIndicator={false}

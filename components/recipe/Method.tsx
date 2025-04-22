@@ -1,105 +1,94 @@
 import { Step } from '@/constants/Recipes';
 import { useDishesTheme } from '@/constants/Theme';
-import {
-  StyleSheet,
-  Pressable,
-  Animated,
-  InteractionManager,
-  Easing,
-} from 'react-native';
+import { StyleSheet, Pressable } from 'react-native';
 import { View } from '../Themed';
 import { Text } from 'react-native-paper';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withTiming,
+  Easing,
+} from 'react-native-reanimated';
 
-type Props = {
+type StepComponentProps = {
+  step: Step;
+  index: number;
+  isActive: boolean;
+  onPress: () => void;
+};
+
+function StepComponent(props: StepComponentProps) {
+  const { step, index, isActive, onPress } = props;
+  const styles = useStyles();
+
+  const animation = useSharedValue(0);
+
+  const animate = useCallback(
+    (toValue: number) => {
+      animation.value = withTiming(toValue, {
+        duration: 200,
+        easing: Easing.inOut(Easing.ease),
+      });
+    },
+    [animation],
+  );
+
+  useEffect(() => {
+    animate(isActive ? 1 : 0);
+  }, [animate, isActive]);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    borderWidth: animation.value * styles.activeStep.borderWidth,
+    paddingHorizontal:
+      styles.activeStep.paddingHorizontal -
+      animation.value * styles.activeStep.borderWidth,
+    paddingVertical: animation.value * styles.activeStep.paddingVertical,
+    shadowOpacity: animation.value * styles.activeStep.shadowOpacity,
+  }));
+
+  return (
+    <Pressable
+      key={index}
+      onPress={onPress}
+      style={{ zIndex: isActive ? 10 : 1 }}
+    >
+      <Animated.View style={[styles.row, styles.activeStep, animatedStyle]}>
+        <View style={styles.stepIndexContainer}>
+          <Text style={[styles.text, styles.stepIndex]}>{`${index + 1}.`}</Text>
+        </View>
+        <View style={styles.stepContainer}>
+          <Text style={[styles.text, styles.step]}>{step}</Text>
+        </View>
+      </Animated.View>
+    </Pressable>
+  );
+}
+
+type MethodProps = {
   method: Step[];
 };
 
-export default function Method({ method }: Props) {
+export default function Method({ method }: MethodProps) {
   const [activeStepIndex, setActiveStepIndex] = useState<number>();
   const styles = useStyles();
 
-  const animationsRef = useRef(method.map(() => new Animated.Value(0)));
-
-  useEffect(() => {
-    animationsRef.current = method.map(() => new Animated.Value(0));
-  }, [method, method.length]);
-
-  const animateStep = (index: number, toValue: number) => {
-    InteractionManager.runAfterInteractions(() => {
-      Animated.timing(animationsRef.current[index], {
-        toValue,
-        duration: 200,
-        easing: Easing.inOut(Easing.ease),
-        useNativeDriver: false, // useNativeDriver must be false for backgroundColor
-      }).start();
-    });
-  };
-
   const onPressStep = (index: number) => () => {
-    if (activeStepIndex === index) {
-      animateStep(index, 0);
-      setActiveStepIndex(undefined);
-    } else {
-      if (activeStepIndex !== undefined) {
-        animateStep(activeStepIndex, 0);
-      }
-      animateStep(index, 1);
-      setActiveStepIndex(index);
-    }
+    setActiveStepIndex(activeStepIndex === index ? undefined : index);
   };
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Preparation</Text>
-      {method.map((step, index) => {
-        const animation = animationsRef.current[index];
-
-        const animatedStyle = {
-          ...styles.activeStep,
-          borderWidth: animation?.interpolate({
-            inputRange: [0, 1],
-            outputRange: [0, styles.activeStep.borderWidth],
-          }),
-          paddingHorizontal: animation?.interpolate({
-            inputRange: [0, 1],
-            outputRange: [
-              styles.activeStep.paddingHorizontal,
-              styles.activeStep.paddingHorizontal -
-                styles.activeStep.borderWidth,
-            ],
-          }),
-          paddingVertical: animation?.interpolate({
-            inputRange: [0, 1],
-            outputRange: [0, styles.activeStep.paddingVertical],
-          }),
-          shadowOffset: styles.activeStep.shadowOffset,
-          shadowOpacity: animation?.interpolate({
-            inputRange: [0, 1],
-            outputRange: [0, styles.activeStep.shadowOpacity], // use a fallback if undefined
-          }),
-        };
-
-        return (
-          <Pressable
-            key={index}
-            onPress={onPressStep(index)}
-            // following zIndex condition keep shadow on top of other steps
-            style={{ zIndex: activeStepIndex === index ? 10 : 1 }}
-          >
-            <Animated.View style={[styles.row, animatedStyle]}>
-              <View style={styles.stepIndexContainer}>
-                <Text
-                  style={[styles.text, styles.stepIndex]}
-                >{`${index + 1}.`}</Text>
-              </View>
-              <View style={styles.stepContainer}>
-                <Text style={[styles.text, styles.step]}>{step}</Text>
-              </View>
-            </Animated.View>
-          </Pressable>
-        );
-      })}
+      {method.map((step, index) => (
+        <StepComponent
+          key={`${index}-${step}`}
+          step={step}
+          index={index}
+          isActive={activeStepIndex === index}
+          onPress={onPressStep(index)}
+        />
+      ))}
     </View>
   );
 }
