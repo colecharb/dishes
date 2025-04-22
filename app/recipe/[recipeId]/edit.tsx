@@ -5,6 +5,7 @@ import {
   TextInput,
   Alert,
   Keyboard,
+  Platform,
 } from 'react-native';
 import { View } from '@/components/Themed';
 import { Button, Text } from 'react-native-paper';
@@ -266,6 +267,7 @@ export default function EditRecipeScreen() {
       <KeyboardAvoidingView
         behavior='height'
         style={styles.keyboardAvoidingView}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 115 : 0}
       >
         <SafeAreaScrollView
           keyboardShouldPersistTaps='handled'
