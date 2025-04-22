@@ -262,143 +262,150 @@ export default function EditRecipeScreen() {
   const methodStyles = useMethodStyles();
 
   return (
-    <KeyboardAvoidingView
-      behavior='padding'
-      style={styles.keyboardAvoidingView}
-    >
-      <SafeAreaScrollView
-        keyboardShouldPersistTaps='handled'
-        style={styles.scrollView}
-        contentContainerStyle={styles.scrollViewContent}
+    <View style={styles.container}>
+      <KeyboardAvoidingView
+        behavior='height'
+        style={styles.keyboardAvoidingView}
       >
-        <View style={styles.section}>
-          <TextInput
-            multiline
-            scrollEnabled={false}
-            autoFocus={isNewRecipe}
-            placeholder='Recipe Name'
-            autoCapitalize='words'
-            style={styles.recipeName}
-            onChangeText={setRecipeName}
-            defaultValue={recipeName}
-            returnKeyType='next'
-            onSubmitEditing={onSubmitEditingName}
-            submitBehavior='submit'
+        <SafeAreaScrollView
+          keyboardShouldPersistTaps='handled'
+          style={styles.scrollView}
+          contentContainerStyle={styles.scrollViewContent}
+        >
+          <View style={styles.section}>
+            <TextInput
+              multiline
+              scrollEnabled={false}
+              autoFocus={isNewRecipe}
+              placeholder='Recipe Name'
+              autoCapitalize='words'
+              style={styles.recipeName}
+              onChangeText={setRecipeName}
+              defaultValue={recipeName}
+              returnKeyType='next'
+              onSubmitEditing={onSubmitEditingName}
+              submitBehavior='submit'
+            />
+          </View>
+          <View style={ingredientsStyles.container}>
+            {recipeIngredients.map(({ amount, ingredient }, index) => (
+              <View
+                key={index}
+                style={ingredientsStyles.row}
+              >
+                <View style={ingredientsStyles.amountContainer}>
+                  <TextInput
+                    multiline
+                    scrollEnabled={false}
+                    ref={(ref) => {
+                      if (!ingredientRefs.current[index]) {
+                        ingredientRefs.current[index] = {
+                          amount: null,
+                          item: null,
+                        };
+                      }
+                      ingredientRefs.current[index].amount = ref;
+                    }}
+                    placeholder='qty.'
+                    style={[ingredientsStyles.text, ingredientsStyles.amount]}
+                    onChangeText={(text) =>
+                      setIngredient(index, 'amount')(text)
+                    }
+                    defaultValue={amount}
+                    returnKeyType='next'
+                    onSubmitEditing={onSubmitEditingIngredient(index, 'amount')}
+                    submitBehavior='submit'
+                  />
+                </View>
+                <View style={ingredientsStyles.ingredientContainer}>
+                  <TextInput
+                    multiline
+                    scrollEnabled={false}
+                    ref={(ref) => {
+                      if (!ingredientRefs.current[index]) {
+                        ingredientRefs.current[index] = {
+                          amount: null,
+                          item: null,
+                        };
+                      }
+                      ingredientRefs.current[index].item = ref;
+                    }}
+                    placeholder='ingredient'
+                    style={[
+                      ingredientsStyles.text,
+                      ingredientsStyles.ingredient,
+                    ]}
+                    onChangeText={(text) =>
+                      setIngredient(index, 'ingredient')(text)
+                    }
+                    defaultValue={ingredient}
+                    returnKeyType='next'
+                    onSubmitEditing={onSubmitEditingIngredient(index, 'item')}
+                    submitBehavior='submit'
+                  />
+                </View>
+              </View>
+            ))}
+            <Button onPress={addIngredientAndFocus}>Add</Button>
+          </View>
+
+          <View style={methodStyles.container}>
+            <Text style={methodStyles.title}>Preparation</Text>
+            {recipeMethod.map((step, index) => (
+              <View
+                key={index}
+                style={methodStyles.row}
+              >
+                <View style={methodStyles.stepIndexContainer}>
+                  <Text
+                    style={[methodStyles.text, methodStyles.stepIndex]}
+                  >{`${index + 1}.`}</Text>
+                </View>
+                <View style={methodStyles.stepContainer}>
+                  <TextInput
+                    multiline
+                    scrollEnabled={false}
+                    ref={(ref) => (methodRefs.current[index] = ref)}
+                    placeholder='Add step...'
+                    style={[methodStyles.text, methodStyles.step]}
+                    onChangeText={(text) => setStep(index)(text)}
+                    defaultValue={step}
+                    returnKeyType='next'
+                    onSubmitEditing={onSubmitEditingStep(index)}
+                    submitBehavior='submit'
+                  />
+                </View>
+              </View>
+            ))}
+            <Button
+              onPress={() => {
+                setRecipeMethod((prev) => [...prev, '']);
+                setTimeout(
+                  () => methodRefs.current[recipeMethod.length]?.focus(),
+                  0,
+                );
+              }}
+            >
+              Add
+            </Button>
+          </View>
+
+          <Image
+            source={SPLASH_ICON}
+            style={styles.dishesImage}
           />
-        </View>
-        <View style={ingredientsStyles.container}>
-          {recipeIngredients.map(({ amount, ingredient }, index) => (
-            <View
-              key={index}
-              style={ingredientsStyles.row}
+
+          {!isNewRecipe && (
+            <Button
+              textColor={colors.danger}
+              onPress={onPressDelete}
             >
-              <View style={ingredientsStyles.amountContainer}>
-                <TextInput
-                  multiline
-                  scrollEnabled={false}
-                  ref={(ref) => {
-                    if (!ingredientRefs.current[index]) {
-                      ingredientRefs.current[index] = {
-                        amount: null,
-                        item: null,
-                      };
-                    }
-                    ingredientRefs.current[index].amount = ref;
-                  }}
-                  placeholder='qty.'
-                  style={[ingredientsStyles.text, ingredientsStyles.amount]}
-                  onChangeText={(text) => setIngredient(index, 'amount')(text)}
-                  defaultValue={amount}
-                  returnKeyType='next'
-                  onSubmitEditing={onSubmitEditingIngredient(index, 'amount')}
-                  submitBehavior='submit'
-                />
-              </View>
-              <View style={ingredientsStyles.ingredientContainer}>
-                <TextInput
-                  multiline
-                  scrollEnabled={false}
-                  ref={(ref) => {
-                    if (!ingredientRefs.current[index]) {
-                      ingredientRefs.current[index] = {
-                        amount: null,
-                        item: null,
-                      };
-                    }
-                    ingredientRefs.current[index].item = ref;
-                  }}
-                  placeholder='ingredient'
-                  style={[ingredientsStyles.text, ingredientsStyles.ingredient]}
-                  onChangeText={(text) =>
-                    setIngredient(index, 'ingredient')(text)
-                  }
-                  defaultValue={ingredient}
-                  returnKeyType='next'
-                  onSubmitEditing={onSubmitEditingIngredient(index, 'item')}
-                  submitBehavior='submit'
-                />
-              </View>
-            </View>
-          ))}
-          <Button onPress={addIngredientAndFocus}>Add</Button>
-        </View>
-
-        <View style={methodStyles.container}>
-          <Text style={methodStyles.title}>Preparation</Text>
-          {recipeMethod.map((step, index) => (
-            <View
-              key={index}
-              style={methodStyles.row}
-            >
-              <View style={methodStyles.stepIndexContainer}>
-                <Text
-                  style={[methodStyles.text, methodStyles.stepIndex]}
-                >{`${index + 1}.`}</Text>
-              </View>
-              <View style={methodStyles.stepContainer}>
-                <TextInput
-                  multiline
-                  scrollEnabled={false}
-                  ref={(ref) => (methodRefs.current[index] = ref)}
-                  placeholder='Add step...'
-                  style={[methodStyles.text, methodStyles.step]}
-                  onChangeText={(text) => setStep(index)(text)}
-                  defaultValue={step}
-                  returnKeyType='next'
-                  onSubmitEditing={onSubmitEditingStep(index)}
-                  submitBehavior='submit'
-                />
-              </View>
-            </View>
-          ))}
-          <Button
-            onPress={() => {
-              setRecipeMethod((prev) => [...prev, '']);
-              setTimeout(
-                () => methodRefs.current[recipeMethod.length]?.focus(),
-                0,
-              );
-            }}
-          >
-            Add
-          </Button>
-        </View>
-
-        <Image
-          source={SPLASH_ICON}
-          style={styles.dishesImage}
-        />
-
-        {!isNewRecipe && (
-          <Button
-            textColor={colors.danger}
-            onPress={onPressDelete}
-          >
-            Delete
-          </Button>
-        )}
-      </SafeAreaScrollView>
-    </KeyboardAvoidingView>
+              Delete
+            </Button>
+          )}
+        </SafeAreaScrollView>
+      </KeyboardAvoidingView>
+    </View>
   );
 }
 
@@ -407,9 +414,11 @@ const useStyles = () => {
   return StyleSheet.create({
     container: {
       flex: 1,
+      backgroundColor: colors.background,
     },
     keyboardAvoidingView: {
       flex: 1,
+      backgroundColor: colors.background,
     },
     scrollView: {
       flex: 1,
