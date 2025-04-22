@@ -5,11 +5,11 @@ import { View } from '../Themed';
 import { Text } from 'react-native-paper';
 import { useState } from 'react';
 
-type Props = {
+type IngredientsCardProps = {
   ingredients: IngredientEntry[];
 };
 
-export default function IngredientsCard({ ingredients }: Props) {
+export default function IngredientsCard({ ingredients }: IngredientsCardProps) {
   const [checkedIngredients, setCheckedIngredients] = useState(
     Array(ingredients.length).fill(false),
   );

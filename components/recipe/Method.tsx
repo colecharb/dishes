@@ -11,21 +11,15 @@ import Animated, {
   Easing,
 } from 'react-native-reanimated';
 
-type Props = {
-  method: Step[];
-};
-
-function StepComponent({
-  step,
-  index,
-  isActive,
-  onPress: _onPress,
-}: {
+type StepComponentProps = {
   step: Step;
   index: number;
   isActive: boolean;
   onPress: () => void;
-}) {
+};
+
+function StepComponent(props: StepComponentProps) {
+  const { step, index, isActive, onPress } = props;
   const styles = useStyles();
 
   const animation = useSharedValue(0);
@@ -56,7 +50,7 @@ function StepComponent({
   return (
     <Pressable
       key={index}
-      onPress={_onPress}
+      onPress={onPress}
       style={{ zIndex: isActive ? 10 : 1 }}
     >
       <Animated.View style={[styles.row, styles.activeStep, animatedStyle]}>
@@ -71,7 +65,11 @@ function StepComponent({
   );
 }
 
-export default function Method({ method }: Props) {
+type MethodProps = {
+  method: Step[];
+};
+
+export default function Method({ method }: MethodProps) {
   const [activeStepIndex, setActiveStepIndex] = useState<number>();
   const styles = useStyles();
 
