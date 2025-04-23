@@ -146,7 +146,6 @@ export default function Recipes() {
             // bottom becomes top because inverted={true}
             contentInset={{
               bottom: safeAreaInsets.top,
-              top: styles.bottomControlsContainer.height,
             }}
             style={styles.flatList}
             contentContainerStyle={styles.flatListContentContainer}
@@ -289,7 +288,9 @@ const useStyles = () => {
       alignItems: 'center',
       marginBottom: safeAreaInsets.bottom,
       paddingBottom: layout.spacer,
-      paddingHorizontal: safeAreaInsets.bottom,
+      paddingHorizontal: keyboardVisible
+        ? layout.spacer
+        : safeAreaInsets.bottom,
       gap: layout.spacer,
       // borderWidth: layout.borderWidth,
       // borderColor: colors.secondary,

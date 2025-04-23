@@ -22,14 +22,10 @@ const SearchBar = (props: SearchBarProps) => {
     ref.current?.clear();
   };
 
-  const onBlur = () => {
-    setSearchOpen(false);
-  };
-
   const { colors } = useDishesTheme();
   const styles = useStyles();
 
-  if (searchOpen) {
+  if (searchOpen || searchQuery) {
     return (
       <View style={styles.searchBarContainer}>
         <TextInput
@@ -39,7 +35,8 @@ const SearchBar = (props: SearchBarProps) => {
           selectionColor={colors.onBackground}
           style={styles.searchBarText}
           onChangeText={setSearchQuery}
-          onBlur={onBlur}
+          onBlur={() => setSearchOpen(false)}
+          onFocus={() => setSearchOpen(true)}
           placeholder='Search...'
           returnKeyType='done'
         />
@@ -82,6 +79,7 @@ const useStyles = () => {
   const { layout, colors } = useDishesTheme();
   return StyleSheet.create({
     searchBarContainer: {
+      flex: 1,
       flexDirection: 'row',
       alignItems: 'center',
       gap: layout.spacer,
