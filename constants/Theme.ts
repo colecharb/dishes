@@ -36,7 +36,6 @@ const dishesTheme = {
     ...MD3DarkTheme.colors,
     background: '#000000',
     onBackground: '#FFFFFF',
-    surface: '#000000',
     shadow: '#FFFFFF',
     ...commonColors,
   },
@@ -54,7 +53,6 @@ const lightTheme: DishesTheme = {
     background: '#FFFFFF',
     onBackground: '#000000',
     surface: '#FFFFFF',
-    shadow: '#000000',
     ...commonColors,
   },
   fonts: {
