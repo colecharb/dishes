@@ -1,9 +1,7 @@
 import {
-  Button,
   Dimensions,
   FlatList,
   Image,
-  Keyboard,
   KeyboardAvoidingView,
   ListRenderItem,
   Pressable,
@@ -11,12 +9,11 @@ import {
   SectionListData,
   SectionListProps,
   StyleSheet,
-  TextInput,
 } from 'react-native';
 
 import { NEW_RECIPE_ID, type Recipe } from '@/constants/Recipes';
 import RecipeListItem from '@/components/RecipeListItem';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { View } from '@/components/Themed';
 import { Text } from 'react-native-paper';
@@ -26,6 +23,7 @@ import useRecipes from '@/hooks/useRecipes';
 import { useDishesTheme } from '@/constants/Theme';
 import useKeyboardVisible from '@/hooks/useKeyboardVisible';
 import GradientOverlay from '@/components/GradientOverlay';
+import SearchBar from '@/components/SearchBar';
 
 const SPLASH_ICON_SOURCE = require('../assets/images/splash-icon.png');
 
@@ -37,14 +35,12 @@ export default function Recipes() {
   const styles = useStyles();
   const { colors } = useDishesTheme();
   const safeAreaInsets = useSafeAreaInsets();
-
-  const searchInputRef = useRef<TextInput>(null);
-
-  const [searchQuery, setSearchQuery] = useState('');
-
   const keyboardVisible = useKeyboardVisible();
 
   const { recipes } = useRecipes();
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const [searchOpen, setSearchOpen] = useState(false);
 
   const sortedRecipes = [...recipes].sort(
     (a, b) => b.modifiedAt.getTime() - a.modifiedAt.getTime(),
@@ -75,14 +71,8 @@ export default function Recipes() {
     },
   ];
 
-  const onPressClearSearch = () => {
-    setSearchQuery('');
-    searchInputRef.current?.clear();
-    Keyboard.dismiss();
-  };
-
   const renderItem: ListRenderItem<Recipe> = ({ item: recipe }) => (
-    <View style={styles.renderItem}>
+    <View>
       <RecipeListItem recipe={recipe} />
     </View>
   );
@@ -126,8 +116,10 @@ export default function Recipes() {
             colors.background,
             colors.background + '00', // background + transparency
             colors.background + '00',
+            // colors.background + 'bb',
+            colors.background,
           ]}
-          locations={[0, 0.07, 0.3, 1]}
+          locations={[0, 0.07, 0.3, 0.825, 1]}
         />
 
         {!keyboardVisible && (
@@ -152,7 +144,9 @@ export default function Recipes() {
           <SectionList<Recipe, SearchResultSection>
             inverted
             // bottom becomes top because inverted={true}
-            contentInset={{ bottom: safeAreaInsets.top }}
+            contentInset={{
+              bottom: safeAreaInsets.top,
+            }}
             style={styles.flatList}
             contentContainerStyle={styles.flatListContentContainer}
             // data={filteredRecipes}
@@ -169,7 +163,10 @@ export default function Recipes() {
           <FlatList<Recipe>
             inverted
             // bottom becomes top because inverted={true}
-            contentInset={{ bottom: safeAreaInsets.top }}
+            contentInset={{
+              bottom: safeAreaInsets.top,
+              // top: styles.bottomControlsContainer.height,
+            }}
             style={styles.flatList}
             contentContainerStyle={styles.flatListContentContainer}
             data={sortedRecipes}
@@ -181,7 +178,7 @@ export default function Recipes() {
           />
         )}
 
-        <View style={styles.divider} />
+        {/* <View style={styles.divider} /> */}
 
         <View
           style={[
@@ -189,26 +186,24 @@ export default function Recipes() {
             keyboardVisible ? styles.searchBarContainerKeyboard : {},
           ]}
         >
-          <View style={[styles.searchBarContainer]}>
-            <TextInput
-              autoCorrect={false}
-              autoCapitalize='none'
-              ref={searchInputRef}
-              selectionColor={'white'}
-              style={styles.searchBarText}
-              onChangeText={(text) => setSearchQuery(text)}
-              placeholder='Search...'
-              returnKeyType='done'
-            />
+          {!searchOpen && (
+            <Pressable style={styles.bottomButton}>
+              <FontAwesome
+                name='sort'
+                size={25}
+                color={colors.secondary}
+              />
+            </Pressable>
+          )}
 
-            {searchQuery && (
-              <Pressable onPress={onPressClearSearch}>
-                <Text>clear</Text>
-              </Pressable>
-            )}
-          </View>
+          <SearchBar
+            searchOpen={searchOpen}
+            setSearchOpen={setSearchOpen}
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+          />
 
-          {!keyboardVisible && (
+          {!searchOpen && (
             <Link
               href={{
                 pathname: '/recipe/[recipeId]/edit',
@@ -216,10 +211,13 @@ export default function Recipes() {
               }}
               asChild
             >
-              <Button
-                color={colors.primary}
-                title='New'
-              />
+              <Pressable style={styles.bottomButton}>
+                <FontAwesome
+                  name='plus'
+                  size={25}
+                  color={colors.secondary}
+                />
+              </Pressable>
             </Link>
           )}
         </View>
@@ -231,9 +229,11 @@ export default function Recipes() {
 const useStyles = () => {
   const { layout, colors } = useDishesTheme();
   const safeAreaInsets = useSafeAreaInsets();
+  const keyboardVisible = useKeyboardVisible();
   const { height: screenHeight } = Dimensions.get('screen');
 
   const footerHeight = screenHeight / 3;
+  const bottomControlsContainerHeight = layout.spacer * 4;
 
   return StyleSheet.create({
     container: {
@@ -254,7 +254,10 @@ const useStyles = () => {
       // flex: 1,
     },
     flatListContentContainer: {
-      paddingTop: layout.spacer,
+      paddingTop:
+        bottomControlsContainerHeight +
+        layout.spacer +
+        (keyboardVisible ? 0 : safeAreaInsets.bottom),
     },
     keyboardAvoidingView: {
       flex: 1,
@@ -268,40 +271,32 @@ const useStyles = () => {
       gap: layout.spacer / 2,
     },
     sectionHeaderText: {
-      // textAlign: 'center',
       color: 'gray',
       fontSize: 20,
       fontWeight: '400',
       fontVariant: ['small-caps'],
     },
-    renderItem: {
-      // flexDirection: 'row',
-      // justifyContent: 'space-between',
-    },
     bottomControlsContainer: {
-      marginBottom: safeAreaInsets.bottom,
-      padding: layout.spacer,
-      gap: layout.spacer,
-    },
-    searchBarContainer: {
-      // backgroundColor: 'transparent',
-
+      zIndex: 10,
+      position: 'absolute',
+      bottom: 0,
+      left: 0,
+      right: 0,
+      height: bottomControlsContainerHeight,
       flexDirection: 'row',
       justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: safeAreaInsets.bottom,
+      paddingBottom: layout.spacer,
+      paddingHorizontal: keyboardVisible
+        ? layout.spacer
+        : safeAreaInsets.bottom,
+      gap: layout.spacer,
+      // borderWidth: layout.borderWidth,
+      // borderColor: colors.secondary,
     },
     searchBarContainerKeyboard: {
       marginBottom: 0,
-    },
-    searchBarText: {
-      flex: 1,
-      color: 'grey',
-      fontSize: 25,
-      fontWeight: 900,
-      fontStyle: 'italic',
-    },
-    bottomButtonsContainer: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
     },
     divider: {
       marginHorizontal: layout.spacer,
@@ -317,6 +312,16 @@ const useStyles = () => {
       height: 75,
       aspectRatio: 1,
       opacity: 0.2,
+    },
+    bottomButton: {
+      borderColor: colors.secondary,
+      borderWidth: layout.borderWidth,
+      borderRadius: '100%',
+      height: layout.spacer * 3,
+      aspectRatio: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: colors.background,
     },
   });
 };

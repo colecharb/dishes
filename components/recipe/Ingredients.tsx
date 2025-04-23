@@ -71,7 +71,7 @@ const useStyles = () => {
       padding: layout.spacer,
       paddingBottom: layout.spacer * 2,
       gap: layout.spacer,
-      backgroundColor: colors.surface,
+      backgroundColor: colors.background,
       borderRadius: layout.spacer,
 
       shadowColor: colors.shadow,
