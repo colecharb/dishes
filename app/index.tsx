@@ -35,12 +35,10 @@ export default function Recipes() {
   const styles = useStyles();
   const { colors } = useDishesTheme();
   const safeAreaInsets = useSafeAreaInsets();
-
-  const [searchQuery, setSearchQuery] = useState('');
-
   const keyboardVisible = useKeyboardVisible();
 
   const { recipes } = useRecipes();
+  const [searchQuery, setSearchQuery] = useState('');
 
   const sortedRecipes = [...recipes].sort(
     (a, b) => b.modifiedAt.getTime() - a.modifiedAt.getTime(),
