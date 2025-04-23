@@ -1,8 +1,8 @@
-import { Keyboard, Pressable, StyleSheet, TextInput } from 'react-native';
+import { Pressable, StyleSheet, TextInput } from 'react-native';
 import { View } from './Themed';
 import { useDishesTheme } from '@/constants/Theme';
 import { Text } from 'react-native-paper';
-import { forwardRef, useRef } from 'react';
+import { useRef } from 'react';
 
 type SearchBarProps = {
   searchQuery: string;
@@ -19,7 +19,6 @@ const SearchBar = (props: SearchBarProps) => {
     setSearchQuery('');
     ref.current?.clear();
     ref.current?.blur();
-    // Keyboard.dismiss();
   };
 
   const styles = useStyles();
@@ -32,7 +31,6 @@ const SearchBar = (props: SearchBarProps) => {
         autoCapitalize='none'
         selectionColor={'white'}
         style={styles.searchBarText}
-        // value={searchQuery}
         onChangeText={setSearchQuery}
         placeholder='Search...'
         returnKeyType='done'
@@ -53,9 +51,6 @@ const useStyles = () => {
     searchBarContainer: {
       flexDirection: 'row',
       justifyContent: 'space-between',
-    },
-    searchBarContainerKeyboard: {
-      marginBottom: 0,
     },
     searchBarText: {
       flex: 1,
