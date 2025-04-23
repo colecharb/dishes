@@ -3,20 +3,17 @@ import {
   Dimensions,
   FlatList,
   Image,
-  Keyboard,
   KeyboardAvoidingView,
   ListRenderItem,
-  Pressable,
   SectionList,
   SectionListData,
   SectionListProps,
   StyleSheet,
-  TextInput,
 } from 'react-native';
 
 import { NEW_RECIPE_ID, type Recipe } from '@/constants/Recipes';
 import RecipeListItem from '@/components/RecipeListItem';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { View } from '@/components/Themed';
 import { Text } from 'react-native-paper';
@@ -26,6 +23,7 @@ import useRecipes from '@/hooks/useRecipes';
 import { useDishesTheme } from '@/constants/Theme';
 import useKeyboardVisible from '@/hooks/useKeyboardVisible';
 import GradientOverlay from '@/components/GradientOverlay';
+import SearchBar from '@/components/SearchBar';
 
 const SPLASH_ICON_SOURCE = require('../assets/images/splash-icon.png');
 
@@ -37,8 +35,6 @@ export default function Recipes() {
   const styles = useStyles();
   const { colors } = useDishesTheme();
   const safeAreaInsets = useSafeAreaInsets();
-
-  const searchInputRef = useRef<TextInput>(null);
 
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -75,14 +71,8 @@ export default function Recipes() {
     },
   ];
 
-  const onPressClearSearch = () => {
-    setSearchQuery('');
-    searchInputRef.current?.clear();
-    Keyboard.dismiss();
-  };
-
   const renderItem: ListRenderItem<Recipe> = ({ item: recipe }) => (
-    <View style={styles.renderItem}>
+    <View>
       <RecipeListItem recipe={recipe} />
     </View>
   );
@@ -189,24 +179,10 @@ export default function Recipes() {
             keyboardVisible ? styles.searchBarContainerKeyboard : {},
           ]}
         >
-          <View style={[styles.searchBarContainer]}>
-            <TextInput
-              autoCorrect={false}
-              autoCapitalize='none'
-              ref={searchInputRef}
-              selectionColor={'white'}
-              style={styles.searchBarText}
-              onChangeText={(text) => setSearchQuery(text)}
-              placeholder='Search...'
-              returnKeyType='done'
-            />
-
-            {searchQuery && (
-              <Pressable onPress={onPressClearSearch}>
-                <Text>clear</Text>
-              </Pressable>
-            )}
-          </View>
+          <SearchBar
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+          />
 
           {!keyboardVisible && (
             <Link
@@ -268,15 +244,10 @@ const useStyles = () => {
       gap: layout.spacer / 2,
     },
     sectionHeaderText: {
-      // textAlign: 'center',
       color: 'gray',
       fontSize: 20,
       fontWeight: '400',
       fontVariant: ['small-caps'],
-    },
-    renderItem: {
-      // flexDirection: 'row',
-      // justifyContent: 'space-between',
     },
     bottomControlsContainer: {
       marginBottom: safeAreaInsets.bottom,
@@ -284,8 +255,6 @@ const useStyles = () => {
       gap: layout.spacer,
     },
     searchBarContainer: {
-      // backgroundColor: 'transparent',
-
       flexDirection: 'row',
       justifyContent: 'space-between',
     },

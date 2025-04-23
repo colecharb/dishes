@@ -1,20 +1,48 @@
-import { StyleSheet, TextInput } from 'react-native';
+import { Keyboard, Pressable, StyleSheet, TextInput } from 'react-native';
 import { View } from './Themed';
 import { useDishesTheme } from '@/constants/Theme';
+import { Text } from 'react-native-paper';
+import { forwardRef, useRef } from 'react';
 
-type Props = {
-  onChangeText: (text: string) => void;
+type SearchBarProps = {
+  searchQuery: string;
+  setSearchQuery: (text: string) => void;
 };
 
-const SearchBar = ({ onChangeText }: Props) => {
+// eslint-disable-next-line react/display-name
+const SearchBar = (props: SearchBarProps) => {
+  const { searchQuery, setSearchQuery } = props;
+
+  const ref = useRef<TextInput>(null);
+
+  const onPressClear = () => {
+    setSearchQuery('');
+    ref.current?.clear();
+    ref.current?.blur();
+    // Keyboard.dismiss();
+  };
+
   const styles = useStyles();
 
   return (
-    <View style={styles.container}>
+    <View style={styles.searchBarContainer}>
       <TextInput
-        onChangeText={onChangeText}
-        style={styles.text}
+        ref={ref}
+        autoCorrect={false}
+        autoCapitalize='none'
+        selectionColor={'white'}
+        style={styles.searchBarText}
+        // value={searchQuery}
+        onChangeText={setSearchQuery}
+        placeholder='Search...'
+        returnKeyType='done'
       />
+
+      {searchQuery && (
+        <Pressable onPress={onPressClear}>
+          <Text>clear</Text>
+        </Pressable>
+      )}
     </View>
   );
 };
@@ -22,11 +50,19 @@ const SearchBar = ({ onChangeText }: Props) => {
 const useStyles = () => {
   const { colors } = useDishesTheme();
   return StyleSheet.create({
-    container: {
-      height: 50,
+    searchBarContainer: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
     },
-    text: {
-      color: colors.primary,
+    searchBarContainerKeyboard: {
+      marginBottom: 0,
+    },
+    searchBarText: {
+      flex: 1,
+      color: colors.secondary,
+      fontSize: 25,
+      fontWeight: 900,
+      fontStyle: 'italic',
     },
   });
 };
