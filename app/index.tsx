@@ -1,10 +1,10 @@
 import {
-  Button,
   Dimensions,
   FlatList,
   Image,
   KeyboardAvoidingView,
   ListRenderItem,
+  Pressable,
   SectionList,
   SectionListData,
   SectionListProps,
@@ -39,6 +39,8 @@ export default function Recipes() {
 
   const { recipes } = useRecipes();
   const [searchQuery, setSearchQuery] = useState('');
+
+  const [searchOpen, setSearchOpen] = useState(false);
 
   const sortedRecipes = [...recipes].sort(
     (a, b) => b.modifiedAt.getTime() - a.modifiedAt.getTime(),
@@ -114,8 +116,10 @@ export default function Recipes() {
             colors.background,
             colors.background + '00', // background + transparency
             colors.background + '00',
+            // colors.background + 'bb',
+            colors.background,
           ]}
-          locations={[0, 0.07, 0.3, 1]}
+          locations={[0, 0.07, 0.3, 0.825, 1]}
         />
 
         {!keyboardVisible && (
@@ -140,7 +144,10 @@ export default function Recipes() {
           <SectionList<Recipe, SearchResultSection>
             inverted
             // bottom becomes top because inverted={true}
-            contentInset={{ bottom: safeAreaInsets.top }}
+            contentInset={{
+              bottom: safeAreaInsets.top,
+              top: styles.bottomControlsContainer.height,
+            }}
             style={styles.flatList}
             contentContainerStyle={styles.flatListContentContainer}
             // data={filteredRecipes}
@@ -157,7 +164,10 @@ export default function Recipes() {
           <FlatList<Recipe>
             inverted
             // bottom becomes top because inverted={true}
-            contentInset={{ bottom: safeAreaInsets.top }}
+            contentInset={{
+              bottom: safeAreaInsets.top,
+              // top: styles.bottomControlsContainer.height,
+            }}
             style={styles.flatList}
             contentContainerStyle={styles.flatListContentContainer}
             data={sortedRecipes}
@@ -169,7 +179,7 @@ export default function Recipes() {
           />
         )}
 
-        <View style={styles.divider} />
+        {/* <View style={styles.divider} /> */}
 
         <View
           style={[
@@ -177,12 +187,24 @@ export default function Recipes() {
             keyboardVisible ? styles.searchBarContainerKeyboard : {},
           ]}
         >
+          {!searchOpen && (
+            <Pressable style={styles.bottomButton}>
+              <FontAwesome
+                name='sort'
+                size={25}
+                color={colors.secondary}
+              />
+            </Pressable>
+          )}
+
           <SearchBar
+            searchOpen={searchOpen}
+            setSearchOpen={setSearchOpen}
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
           />
 
-          {!keyboardVisible && (
+          {!searchOpen && (
             <Link
               href={{
                 pathname: '/recipe/[recipeId]/edit',
@@ -190,10 +212,13 @@ export default function Recipes() {
               }}
               asChild
             >
-              <Button
-                color={colors.primary}
-                title='New'
-              />
+              <Pressable style={styles.bottomButton}>
+                <FontAwesome
+                  name='plus'
+                  size={25}
+                  color={colors.secondary}
+                />
+              </Pressable>
             </Link>
           )}
         </View>
@@ -205,9 +230,11 @@ export default function Recipes() {
 const useStyles = () => {
   const { layout, colors } = useDishesTheme();
   const safeAreaInsets = useSafeAreaInsets();
+  const keyboardVisible = useKeyboardVisible();
   const { height: screenHeight } = Dimensions.get('screen');
 
   const footerHeight = screenHeight / 3;
+  const bottomControlsContainerHeight = layout.spacer * 4;
 
   return StyleSheet.create({
     container: {
@@ -228,7 +255,10 @@ const useStyles = () => {
       // flex: 1,
     },
     flatListContentContainer: {
-      paddingTop: layout.spacer,
+      paddingTop:
+        bottomControlsContainerHeight +
+        layout.spacer +
+        (keyboardVisible ? 0 : safeAreaInsets.bottom),
     },
     keyboardAvoidingView: {
       flex: 1,
@@ -248,27 +278,24 @@ const useStyles = () => {
       fontVariant: ['small-caps'],
     },
     bottomControlsContainer: {
-      marginBottom: safeAreaInsets.bottom,
-      padding: layout.spacer,
-      gap: layout.spacer,
-    },
-    searchBarContainer: {
+      zIndex: 10,
+      position: 'absolute',
+      bottom: 0,
+      left: 0,
+      right: 0,
+      height: bottomControlsContainerHeight,
       flexDirection: 'row',
       justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: safeAreaInsets.bottom,
+      paddingBottom: layout.spacer,
+      paddingHorizontal: safeAreaInsets.bottom,
+      gap: layout.spacer,
+      // borderWidth: layout.borderWidth,
+      // borderColor: colors.secondary,
     },
     searchBarContainerKeyboard: {
       marginBottom: 0,
-    },
-    searchBarText: {
-      flex: 1,
-      color: 'grey',
-      fontSize: 25,
-      fontWeight: 900,
-      fontStyle: 'italic',
-    },
-    bottomButtonsContainer: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
     },
     divider: {
       marginHorizontal: layout.spacer,
@@ -284,6 +311,16 @@ const useStyles = () => {
       height: 75,
       aspectRatio: 1,
       opacity: 0.2,
+    },
+    bottomButton: {
+      borderColor: colors.secondary,
+      borderWidth: layout.borderWidth,
+      borderRadius: '100%',
+      height: layout.spacer * 3,
+      aspectRatio: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: colors.background,
     },
   });
 };

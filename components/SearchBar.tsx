@@ -1,56 +1,96 @@
 import { Pressable, StyleSheet, TextInput } from 'react-native';
 import { View } from './Themed';
 import { useDishesTheme } from '@/constants/Theme';
-import { Text } from 'react-native-paper';
 import { useRef } from 'react';
+import { FontAwesome } from '@expo/vector-icons';
 
 type SearchBarProps = {
+  searchOpen: boolean;
+  setSearchOpen: (open: boolean) => void;
   searchQuery: string;
   setSearchQuery: (text: string) => void;
 };
 
 // eslint-disable-next-line react/display-name
 const SearchBar = (props: SearchBarProps) => {
-  const { searchQuery, setSearchQuery } = props;
+  const { searchOpen, setSearchOpen, searchQuery, setSearchQuery } = props;
 
   const ref = useRef<TextInput>(null);
 
   const onPressClear = () => {
     setSearchQuery('');
     ref.current?.clear();
-    ref.current?.blur();
   };
 
+  const onBlur = () => {
+    setSearchOpen(false);
+  };
+
+  const { colors } = useDishesTheme();
   const styles = useStyles();
 
-  return (
-    <View style={styles.searchBarContainer}>
-      <TextInput
-        ref={ref}
-        autoCorrect={false}
-        autoCapitalize='none'
-        selectionColor={'white'}
-        style={styles.searchBarText}
-        onChangeText={setSearchQuery}
-        placeholder='Search...'
-        returnKeyType='done'
-      />
+  if (searchOpen) {
+    return (
+      <View style={styles.searchBarContainer}>
+        <TextInput
+          ref={ref}
+          autoCorrect={false}
+          autoCapitalize='none'
+          selectionColor={colors.onBackground}
+          style={styles.searchBarText}
+          onChangeText={setSearchQuery}
+          onBlur={onBlur}
+          placeholder='Search...'
+          returnKeyType='done'
+        />
 
-      {searchQuery && (
-        <Pressable onPress={onPressClear}>
-          <Text>clear</Text>
+        {searchQuery && (
+          <Pressable onPress={onPressClear}>
+            <FontAwesome
+              name='times'
+              size={25}
+              style={styles.clearIcon}
+            />
+          </Pressable>
+        )}
+      </View>
+    );
+  } else {
+    return (
+      <View style={styles.searchButtonContainer}>
+        <Pressable
+          onPress={() => {
+            setSearchOpen(true);
+            setTimeout(() => {
+              ref.current?.focus();
+            }, 10);
+          }}
+          style={styles.searchButton}
+        >
+          <FontAwesome
+            name='search'
+            size={25}
+            style={styles.searchIcon}
+          />
         </Pressable>
-      )}
-    </View>
-  );
+      </View>
+    );
+  }
 };
 
 const useStyles = () => {
-  const { colors } = useDishesTheme();
+  const { layout, colors } = useDishesTheme();
   return StyleSheet.create({
     searchBarContainer: {
       flexDirection: 'row',
-      justifyContent: 'space-between',
+      alignItems: 'center',
+      gap: layout.spacer,
+      borderColor: colors.secondary,
+      borderWidth: layout.borderWidth,
+      borderRadius: layout.spacer * 2,
+      padding: layout.spacer / 2,
+      paddingHorizontal: layout.spacer,
+      backgroundColor: colors.background,
     },
     searchBarText: {
       flex: 1,
@@ -58,6 +98,26 @@ const useStyles = () => {
       fontSize: 25,
       fontWeight: 900,
       fontStyle: 'italic',
+    },
+    searchButtonContainer: {
+      flexDirection: 'row',
+    },
+    searchButton: {
+      borderColor: colors.secondary,
+      borderWidth: layout.borderWidth,
+      borderRadius: '100%',
+      height: layout.spacer * 4,
+      aspectRatio: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: colors.background,
+    },
+    searchIcon: {
+      color: colors.secondary,
+    },
+    clearIcon: {
+      color: colors.secondary,
+      fontSize: 25,
     },
   });
 };
