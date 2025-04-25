@@ -4,6 +4,8 @@ import {
   Image,
   KeyboardAvoidingView,
   ListRenderItem,
+  NativeScrollEvent,
+  NativeSyntheticEvent,
   Pressable,
   SectionList,
   SectionListData,
@@ -24,7 +26,9 @@ import { useDishesTheme } from '@/constants/Theme';
 import useKeyboardVisible from '@/hooks/useKeyboardVisible';
 import GradientOverlay from '@/components/GradientOverlay';
 import SearchBar from '@/components/SearchBar';
-
+import RecipeCellRenderer from '@/components/recipe-list/RecipeCellRenderer';
+import { useSharedValue } from 'react-native-reanimated';
+import { CARD_HEIGHT, PEEK_HEIGHT } from '@/components/RecipeListItem';
 const SPLASH_ICON_SOURCE = require('../assets/images/splash-icon.png');
 
 type SearchResultSection = {
@@ -36,6 +40,8 @@ export default function Recipes() {
   const { colors } = useDishesTheme();
   const safeAreaInsets = useSafeAreaInsets();
   const keyboardVisible = useKeyboardVisible();
+
+  const scrollY = useSharedValue<number>(0);
 
   const { recipes } = useRecipes();
   const [searchQuery, setSearchQuery] = useState('');
@@ -71,11 +77,19 @@ export default function Recipes() {
     },
   ];
 
-  const renderItem: ListRenderItem<Recipe> = ({ item: recipe }) => (
-    <View>
-      <RecipeListItem recipe={recipe} />
-    </View>
-  );
+  const onScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    // console.log('onScroll', event.nativeEvent.contentOffset.y);
+    scrollY.value = event.nativeEvent.contentOffset.y;
+  };
+
+  const renderItem: ListRenderItem<Recipe> = ({ item: recipe, index }) => {
+    return (
+      <RecipeListItem
+        recipe={recipe}
+        index={index}
+      />
+    );
+  };
 
   const renderSectionHeader: SectionListProps<
     Recipe,
@@ -92,10 +106,7 @@ export default function Recipes() {
       </View>
     ) : null;
 
-  const ListFooterComponent: SectionListProps<
-    Recipe,
-    SearchResultSection
-  >['renderSectionFooter'] = () => (
+  const ListFooterComponent = () => (
     <View style={styles.renderSectionFooter}>
       <Image
         source={SPLASH_ICON_SOURCE}
@@ -116,10 +127,10 @@ export default function Recipes() {
             colors.background,
             colors.background + '00', // background + transparency
             colors.background + '00',
-            // colors.background + 'bb',
+            colors.background,
             colors.background,
           ]}
-          locations={[0, 0.07, 0.3, 0.825, 1]}
+          locations={[0, 0.07, 0.3, 0.7, 0.97, 1]}
         />
 
         {!keyboardVisible && (
@@ -143,13 +154,18 @@ export default function Recipes() {
         {searchQuery ? (
           <SectionList<Recipe, SearchResultSection>
             inverted
+            CellRendererComponent={(props) => (
+              <RecipeCellRenderer
+                {...props}
+                scrollY={scrollY}
+              />
+            )}
             // bottom becomes top because inverted={true}
             contentInset={{
               bottom: safeAreaInsets.top,
             }}
             style={styles.flatList}
             contentContainerStyle={styles.flatListContentContainer}
-            // data={filteredRecipes}
             sections={filteredRecipes}
             keyExtractor={(r) => r.id}
             renderItem={renderItem}
@@ -158,14 +174,23 @@ export default function Recipes() {
             keyboardShouldPersistTaps='handled'
             stickySectionHeadersEnabled={false}
             ListFooterComponent={ListFooterComponent}
+            onScroll={onScroll}
           />
         ) : (
           <FlatList<Recipe>
             inverted
+            CellRendererComponent={(props) => (
+              <RecipeCellRenderer
+                {...props}
+                scrollY={scrollY}
+              />
+            )}
+            snapToInterval={PEEK_HEIGHT}
+            snapToAlignment='start'
+            decelerationRate='fast'
             // bottom becomes top because inverted={true}
             contentInset={{
               bottom: safeAreaInsets.top,
-              // top: styles.bottomControlsContainer.height,
             }}
             style={styles.flatList}
             contentContainerStyle={styles.flatListContentContainer}
@@ -175,10 +200,9 @@ export default function Recipes() {
             showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps='handled'
             ListFooterComponent={ListFooterComponent}
+            onScroll={onScroll}
           />
         )}
-
-        {/* <View style={styles.divider} /> */}
 
         <View
           style={[
@@ -232,7 +256,7 @@ const useStyles = () => {
   const keyboardVisible = useKeyboardVisible();
   const { height: screenHeight } = Dimensions.get('screen');
 
-  const footerHeight = screenHeight / 3;
+  const footerHeight = screenHeight / 2;
   const bottomControlsContainerHeight = layout.spacer * 4;
 
   return StyleSheet.create({
@@ -254,10 +278,12 @@ const useStyles = () => {
       // flex: 1,
     },
     flatListContentContainer: {
+      padding: layout.spacer * 2,
       paddingTop:
-        bottomControlsContainerHeight +
+        // bottomControlsContainerHeight +
+        CARD_HEIGHT +
         layout.spacer +
-        (keyboardVisible ? 0 : safeAreaInsets.bottom),
+        (keyboardVisible ? 0 : safeAreaInsets.bottom + layout.spacer),
     },
     keyboardAvoidingView: {
       flex: 1,
