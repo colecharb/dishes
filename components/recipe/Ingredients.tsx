@@ -7,17 +7,22 @@ import { useState } from 'react';
 
 type RenderIngredientProps = {
   ingredientEntry: IngredientEntry;
+  isPressable?: boolean;
 };
 
-function RenderIngredient({ ingredientEntry }: RenderIngredientProps) {
+export function RenderIngredient({
+  ingredientEntry,
+  isPressable: _isPressable,
+}: RenderIngredientProps) {
   const { amount, ingredient } = ingredientEntry;
+  const isPressable = _isPressable ?? true;
 
   const [isChecked, setIsChecked] = useState(false);
   const styles = useStyles();
 
   return (
     <Pressable
-      onPress={() => setIsChecked((prev) => !prev)}
+      onPress={isPressable ? () => setIsChecked((prev) => !prev) : undefined}
       key={ingredient}
       style={styles.row}
     >
