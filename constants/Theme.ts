@@ -11,7 +11,7 @@ const layout = {
   borderWidth: 2,
   shadowOffset: { width: 0, height: 0 },
   shadowRadius: 12,
-  shadowOpacity: 0.5,
+  shadowOpacity: 0.4,
 } as const;
 
 // colors used across all themes
