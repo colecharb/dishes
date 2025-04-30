@@ -6,16 +6,18 @@ import Animated, {
   clamp,
 } from 'react-native-reanimated';
 import { useMemo } from 'react';
-import { CARD_HEIGHT, PEEK_HEIGHT } from '../RecipeListItem';
+import { CARD_HEIGHT, PEEK_HEIGHT } from './RecipeCard';
 
-const RecipeCellRenderer = ({
-  index,
-  children,
-  style,
-  scrollY,
-}: CellRendererProps<Recipe> & {
-  scrollY: SharedValue<number>;
-}) => {
+export type MaybeFilteredRecipe = Recipe & {
+  filteredBy?: 'name' | 'ingredient';
+};
+
+const RecipeListItemCellRenderer = (
+  props: CellRendererProps<MaybeFilteredRecipe> & {
+    scrollY: SharedValue<number>;
+  },
+) => {
+  const { item, index, children, style, scrollY } = props;
   // Calculate rotation based on position
   // Each cell is 150px tall with -90px marginBottom, so effective height is 60px
   const minRotation = 15;
@@ -23,7 +25,13 @@ const RecipeCellRenderer = ({
 
   const animatedStyle = useAnimatedStyle(() => {
     const rotation = clamp(
-      (scrollY.value - index * PEEK_HEIGHT) * 1.4,
+      (scrollY.value -
+        /**
+         * If the recipe is filtered by ingredient, we need to offset the index by 1
+         * because of weirdness with how the sectionFooter is rendered
+         */
+        (index - (item.filteredBy === 'ingredient' ? 1 : 0)) * PEEK_HEIGHT) *
+        1.4,
       minRotation,
       maxRotation,
     );
@@ -44,10 +52,7 @@ const RecipeCellRenderer = ({
     return StyleSheet.flatten([animatedStyle, style]);
   }, [animatedStyle, style]);
 
-  return useMemo(
-    () => <Animated.View style={combinedStyle}>{children}</Animated.View>,
-    [combinedStyle, children],
-  );
+  return <Animated.View style={combinedStyle}>{children}</Animated.View>;
 };
 
-export default RecipeCellRenderer;
+export default RecipeListItemCellRenderer;
