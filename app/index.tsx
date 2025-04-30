@@ -340,7 +340,7 @@ const useStyles = () => {
     bottomButton: {
       shadowColor: colors.shadow,
       shadowOffset: { width: 0, height: 0 },
-      shadowOpacity: layout.shadowOpacity,
+      shadowOpacity: 1, //layout.shadowOpacity,
       shadowRadius: layout.spacer / 2,
       // borderColor: colors.secondary,
       // borderWidth: layout.borderWidth,
