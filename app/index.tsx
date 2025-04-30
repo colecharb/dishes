@@ -14,9 +14,7 @@ import {
 } from 'react-native';
 
 import { NEW_RECIPE_ID, type Recipe } from '@/constants/Recipes';
-import RecipeCard, {
-  useStyles as useRecipeCardStyles,
-} from '@/components/recipe-list/RecipeCard';
+import RecipeCard from '@/components/recipe-list/RecipeCard';
 import { useState } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { View } from '@/components/Themed';
@@ -263,7 +261,6 @@ export default function Recipes() {
 }
 
 const useStyles = () => {
-  const recipeCardStyles = useRecipeCardStyles();
   const { layout, colors } = useDishesTheme();
   const safeAreaInsets = useSafeAreaInsets();
   const keyboardVisible = useKeyboardVisible();
