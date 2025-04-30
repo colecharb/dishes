@@ -20,7 +20,6 @@ import RecipeCard, {
 import { useState } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { View } from '@/components/Themed';
-import { Text } from 'react-native-paper';
 import { FontAwesome } from '@expo/vector-icons';
 import { Link } from 'expo-router';
 import useRecipes from '@/hooks/useRecipes';
@@ -30,15 +29,12 @@ import GradientOverlay from '@/components/GradientOverlay';
 import SearchBar from '@/components/SearchBar';
 import RecipeListItemCellRenderer, {
   MaybeFilteredRecipe,
+  SearchResultSection,
 } from '@/components/recipe-list/RecipeListItemCellRenderer';
 import { useSharedValue } from 'react-native-reanimated';
 import { CARD_HEIGHT, PEEK_HEIGHT } from '@/components/recipe-list/RecipeCard';
+import SectionHeaderCard from '@/components/recipe-list/SectionHeaderCard';
 const SPLASH_ICON_SOURCE = require('../assets/images/splash-icon.png');
-
-type SearchResultSection = {
-  title: string;
-  filteredBy: 'name' | 'ingredient';
-};
 
 export default function Recipes() {
   const styles = useStyles();
@@ -92,12 +88,12 @@ export default function Recipes() {
     SearchResultSection
   >[] = [
     {
-      title: 'Name Matches',
+      title: 'By Name',
       filteredBy: 'name',
       data: nameFilteredRecipes,
     },
     {
-      title: 'Ingredient Matches',
+      title: 'By Ingredient',
       filteredBy: 'ingredient',
       data: ingredientFilteredRecipes,
     },
@@ -120,17 +116,9 @@ export default function Recipes() {
   const renderSectionHeader: SectionListProps<
     MaybeFilteredRecipe,
     SearchResultSection
-  >['renderSectionHeader'] = ({ section }) =>
-    section.data[0] ? (
-      <View style={styles.sectionHeaderContainer}>
-        <FontAwesome
-          name='arrow-up'
-          color='gray'
-          size={15}
-        />
-        <Text style={styles.sectionHeaderText}>{section.title}</Text>
-      </View>
-    ) : null;
+  >['renderSectionHeader'] = ({ section }) => (
+    <SectionHeaderCard section={section} />
+  );
 
   const ListFooterComponent = () => (
     <View style={styles.renderSectionFooter}>
@@ -313,21 +301,6 @@ const useStyles = () => {
     keyboardAvoidingView: {
       flex: 1,
       backgroundColor: colors.background,
-    },
-    sectionHeaderContainer: recipeCardStyles.container,
-    // {
-    //   height: CARD_HEIGHT,
-    //   paddingVertical: layout.spacer / 2,
-    //   paddingHorizontal: layout.spacer,
-    //   flexDirection: 'row',
-    //   alignItems: 'center',
-    //   gap: layout.spacer / 2,
-    // },
-    sectionHeaderText: {
-      color: 'gray',
-      fontSize: 20,
-      fontWeight: '400',
-      fontVariant: ['small-caps'],
     },
     bottomControlsContainer: {
       zIndex: 10,

@@ -8,12 +8,12 @@ import { View } from '../Themed';
 export const CARD_HEIGHT = 150;
 export const PEEK_HEIGHT = 60;
 
-type RecipeListItemProps = {
+type RecipeCardProps = {
   recipe: Recipe;
   index: number;
 };
 
-const RecipeListItem = ({ recipe, index }: RecipeListItemProps) => {
+const RecipeCard = ({ recipe, index }: RecipeCardProps) => {
   const styles = useStyles();
 
   return (
@@ -57,4 +57,4 @@ export const useStyles = () => {
   });
 };
 
-export default RecipeListItem;
+export default RecipeCard;

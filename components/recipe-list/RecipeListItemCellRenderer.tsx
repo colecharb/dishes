@@ -12,8 +12,13 @@ export type MaybeFilteredRecipe = Recipe & {
   filteredBy?: 'name' | 'ingredient';
 };
 
+export type SearchResultSection = {
+  title: string;
+  filteredBy: 'name' | 'ingredient';
+};
+
 const RecipeListItemCellRenderer = (
-  props: CellRendererProps<MaybeFilteredRecipe> & {
+  props: CellRendererProps<MaybeFilteredRecipe | SearchResultSection> & {
     scrollY: SharedValue<number>;
   },
 ) => {
