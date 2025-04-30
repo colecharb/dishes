@@ -28,19 +28,19 @@ const RecipeCard = ({ recipe, index }: RecipeCardProps) => {
       }}
     >
       <Pressable style={styles.container}>
-        <GradientOverlay
-          colors={[
-            colors.background + '00',
-            colors.background + '00',
-            colors.background,
-          ]}
-          locations={[0, 0.25, 1]}
-        />
         <Text style={styles.recipeName}>{recipe.name}</Text>
         <View
           style={styles.ingredientsContainer}
           pointerEvents='none'
         >
+          <GradientOverlay
+            colors={[
+              colors.background + '00',
+              // colors.background + '00',
+              colors.background + 'dd',
+            ]}
+            // locations={[0, 0.25, 1]}
+          />
           {recipe.ingredients.map((ingredient) => (
             <RenderIngredient
               key={ingredient.ingredient}
@@ -76,7 +76,7 @@ export const useStyles = () => {
       flex: 1,
       overflow: 'hidden',
       gap: layout.spacer / 2,
-      opacity: 0.7,
+      opacity: 0.6,
     },
     recipeName: {
       fontSize: 25,
