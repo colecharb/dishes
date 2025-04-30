@@ -76,6 +76,7 @@ export const useStyles = () => {
       flex: 1,
       overflow: 'hidden',
       gap: layout.spacer / 2,
+      opacity: 0.7,
     },
     recipeName: {
       fontSize: 25,
