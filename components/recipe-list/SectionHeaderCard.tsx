@@ -59,7 +59,7 @@ const useStyles = () => {
       paddingHorizontal: layout.spacer,
       borderTopLeftRadius: layout.spacer / 2,
       borderTopRightRadius: layout.spacer / 2,
-      borderWidth: layout.borderWidth,
+      // borderWidth: layout.borderWidth,
       // borderColor: 'red',
       backgroundColor: colors.background,
     },
