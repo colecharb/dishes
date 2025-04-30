@@ -1,4 +1,10 @@
-import { Pressable, StyleSheet, TextInput } from 'react-native';
+import {
+  Pressable,
+  StyleProp,
+  StyleSheet,
+  TextInput,
+  ViewStyle,
+} from 'react-native';
 import { View } from './Themed';
 import { useDishesTheme } from '@/constants/Theme';
 import { useRef } from 'react';
@@ -9,11 +15,13 @@ type SearchBarProps = {
   setSearchOpen: (open: boolean) => void;
   searchQuery: string;
   onChangeText: (text: string) => void;
+  buttonStyle?: StyleProp<ViewStyle>;
 };
 
 // eslint-disable-next-line react/display-name
 const SearchBar = (props: SearchBarProps) => {
-  const { searchOpen, setSearchOpen, searchQuery, onChangeText } = props;
+  const { buttonStyle, searchOpen, setSearchOpen, searchQuery, onChangeText } =
+    props;
 
   const ref = useRef<TextInput>(null);
 
@@ -27,7 +35,7 @@ const SearchBar = (props: SearchBarProps) => {
 
   if (searchOpen || searchQuery) {
     return (
-      <View style={styles.searchBarContainer}>
+      <View style={[buttonStyle, styles.searchBarContainer]}>
         <TextInput
           ref={ref}
           autoCorrect={false}
@@ -62,7 +70,7 @@ const SearchBar = (props: SearchBarProps) => {
               ref.current?.focus();
             }, 10);
           }}
-          style={styles.searchButton}
+          style={buttonStyle}
         >
           <FontAwesome
             name='search'
@@ -79,12 +87,15 @@ const useStyles = () => {
   const { layout, colors } = useDishesTheme();
   return StyleSheet.create({
     searchBarContainer: {
+      height: 'auto',
+      aspectRatio: undefined,
+
       flex: 1,
       flexDirection: 'row',
       alignItems: 'center',
       gap: layout.spacer,
-      borderColor: colors.secondary,
-      borderWidth: layout.borderWidth,
+      // borderColor: colors.secondary,
+      // borderWidth: layout.borderWidth,
       borderRadius: layout.spacer * 2,
       padding: layout.spacer / 2,
       paddingHorizontal: layout.spacer,
@@ -99,16 +110,6 @@ const useStyles = () => {
     },
     searchButtonContainer: {
       flexDirection: 'row',
-    },
-    searchButton: {
-      borderColor: colors.secondary,
-      borderWidth: layout.borderWidth,
-      borderRadius: '100%',
-      height: layout.spacer * 4,
-      aspectRatio: 1,
-      alignItems: 'center',
-      justifyContent: 'center',
-      backgroundColor: colors.background,
     },
     searchIcon: {
       color: colors.secondary,

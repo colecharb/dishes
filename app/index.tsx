@@ -235,6 +235,7 @@ export default function Recipes() {
             setSearchOpen={setSearchOpen}
             searchQuery={searchQuery}
             onChangeText={onChangeText}
+            buttonStyle={[styles.bottomButton, styles.searchButton]}
           />
 
           {!searchOpen && (
@@ -337,14 +338,21 @@ const useStyles = () => {
       opacity: 0.2,
     },
     bottomButton: {
-      borderColor: colors.secondary,
-      borderWidth: layout.borderWidth,
+      shadowColor: colors.shadow,
+      shadowOffset: { width: 0, height: 0 },
+      shadowOpacity: layout.shadowOpacity,
+      shadowRadius: layout.spacer / 2,
+      // borderColor: colors.secondary,
+      // borderWidth: layout.borderWidth,
       borderRadius: '100%',
       height: layout.spacer * 3,
       aspectRatio: 1,
       alignItems: 'center',
       justifyContent: 'center',
       backgroundColor: colors.background,
+    },
+    searchButton: {
+      height: layout.spacer * 4,
     },
   });
 };
