@@ -8,17 +8,17 @@ type SearchBarProps = {
   searchOpen: boolean;
   setSearchOpen: (open: boolean) => void;
   searchQuery: string;
-  setSearchQuery: (text: string) => void;
+  onChangeText: (text: string) => void;
 };
 
 // eslint-disable-next-line react/display-name
 const SearchBar = (props: SearchBarProps) => {
-  const { searchOpen, setSearchOpen, searchQuery, setSearchQuery } = props;
+  const { searchOpen, setSearchOpen, searchQuery, onChangeText } = props;
 
   const ref = useRef<TextInput>(null);
 
   const onPressClear = () => {
-    setSearchQuery('');
+    onChangeText('');
     ref.current?.clear();
   };
 
@@ -34,7 +34,7 @@ const SearchBar = (props: SearchBarProps) => {
           autoCapitalize='none'
           selectionColor={colors.onBackground}
           style={styles.searchBarText}
-          onChangeText={setSearchQuery}
+          onChangeText={onChangeText}
           onBlur={() => setSearchOpen(false)}
           onFocus={() => setSearchOpen(true)}
           placeholder='Search...'
