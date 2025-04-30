@@ -29,14 +29,9 @@ const RecipeListItemCellRenderer = (
   const maxRotation = 90;
 
   const animatedStyle = useAnimatedStyle(() => {
+    const adjustedIndex = index - (item.filteredBy === 'ingredient' ? 1 : 0);
     const rotation = clamp(
-      (scrollY.value -
-        /**
-         * If the recipe is filtered by ingredient, we need to offset the index by 1
-         * because of weirdness with how the sectionFooter is rendered
-         */
-        (index - (item.filteredBy === 'ingredient' ? 1 : 0)) * PEEK_HEIGHT) *
-        1.4,
+      (scrollY.value - adjustedIndex * PEEK_HEIGHT) * 1.4,
       minRotation,
       maxRotation,
     );
@@ -51,7 +46,7 @@ const RecipeListItemCellRenderer = (
       ],
       zIndex: -index,
     };
-  }, [scrollY.value]);
+  });
 
   const combinedStyle = useMemo(() => {
     return StyleSheet.flatten([animatedStyle, style]);
