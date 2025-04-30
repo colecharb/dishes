@@ -87,6 +87,7 @@ function RootLayoutNav() {
         name='recipe/[recipeId]/edit'
         options={{
           presentation: 'modal',
+          gestureEnabled: false,
         }}
       />
       <Stack.Screen
