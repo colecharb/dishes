@@ -6,9 +6,8 @@ const RECIPE_ID_INDEX_KEY = 'recipe.index';
 // RECIPE IDS //
 
 /**
- * Get the list of recipe IDs.
+ * Get the list of all recipe IDs.
  */
-
 const getRecipeIds = async (): Promise<string[]> =>
   AsyncStorage.getItem(RECIPE_ID_INDEX_KEY)
     .then((jsonString) => {
@@ -19,6 +18,9 @@ const getRecipeIds = async (): Promise<string[]> =>
       return [];
     });
 
+/**
+ * Add a list of recipe IDs to the index.
+ */
 const addToRecipeIds = async (ids: string[]): Promise<void> => {
   const recipeIds = await getRecipeIds();
 
@@ -37,6 +39,9 @@ const addToRecipeIds = async (ids: string[]): Promise<void> => {
   ).catch((error) => console.error('Error adding recipe ID:', error));
 };
 
+/**
+ * Remove a recipe ID from the index.
+ */
 const removeFromRecipeIds = async (id: string): Promise<void> => {
   const recipeIds = await getRecipeIds();
   const newRecipeIds = recipeIds.filter((recipeId) => recipeId !== id);
@@ -49,6 +54,9 @@ const removeFromRecipeIds = async (id: string): Promise<void> => {
 
 // RECIPES //
 
+/**
+ * Convert a raw recipe (dates are strings) to a recipe (dates are Date objects).
+ */
 const recipeRawToRecipe = (recipeRaw: RecipeRaw | null): Recipe | null => {
   if (!recipeRaw) {
     return null;
@@ -62,11 +70,17 @@ const recipeRawToRecipe = (recipeRaw: RecipeRaw | null): Recipe | null => {
   };
 };
 
+/**
+ * Save a recipe to the database.
+ */
 const save = (recipe: Recipe): Promise<void> =>
   AsyncStorage.setItem(recipe.id, JSON.stringify(recipe))
     .then(() => addToRecipeIds([recipe.id]))
     .catch((error) => console.error('Error saving recipe:', error));
 
+/**
+ * Save multiple recipes to the database.
+ */
 const saveMultiple = async (recipes: Recipe[]): Promise<void> => {
   const recipeIds = recipes.map((recipe) => recipe.id);
   const recipeKeyValuePairs = recipes.map<[string, string]>((recipe) => [
@@ -78,6 +92,9 @@ const saveMultiple = async (recipes: Recipe[]): Promise<void> => {
     .catch((error) => console.error('Error saving recipe:', error));
 };
 
+/**
+ * Get a recipe from the database.
+ */
 const get = (id: string): Promise<Recipe | null> =>
   AsyncStorage.getItem(id)
     .then((jsonString) =>
@@ -89,6 +106,9 @@ const get = (id: string): Promise<Recipe | null> =>
       return null;
     });
 
+/**
+ * Get all recipes from the database.
+ */
 const getAll = (): Promise<Recipe[]> =>
   getRecipeIds()
     .then((keys) => {
@@ -107,6 +127,9 @@ const getAll = (): Promise<Recipe[]> =>
       return [];
     });
 
+/**
+ * Delete a recipe from the database.
+ */
 const deleteRecipe = (id: string): Promise<void> =>
   AsyncStorage.removeItem(id)
     .then(() => {
@@ -116,6 +139,9 @@ const deleteRecipe = (id: string): Promise<void> =>
       console.error('Error deleting recipe:', error);
     });
 
+/**
+ * Delete all recipes from the database.
+ */
 const deleteAll = (): Promise<void> =>
   getRecipeIds()
     .then((keys) => {
