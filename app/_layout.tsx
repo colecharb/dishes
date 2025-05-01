@@ -9,6 +9,7 @@ import 'react-native-reanimated';
 import { PaperProvider } from 'react-native-paper';
 import { dishesTheme, lightTheme, useDishesTheme } from '@/constants/Theme';
 import useColorScheme from '@/hooks/useColorScheme';
+import useSettings from '@/hooks/useSettings';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -24,12 +25,16 @@ export const unstable_settings = {
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
+  const { settings } = useSettings();
+
+  const { autoTheme, manualDarkTheme } = settings;
+
   const [loaded, error] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
     ...FontAwesome.font,
   });
 
-  const colorScheme = useColorScheme();
+  const deviceColorScheme = useColorScheme();
 
   // Expo Router uses Error Boundaries to catch errors in the navigation tree.
   useEffect(() => {
@@ -46,7 +51,14 @@ export default function RootLayout() {
     return null;
   }
 
-  const theme = colorScheme === 'dark' ? dishesTheme : lightTheme;
+  const theme =
+    (autoTheme.value ?? autoTheme.defaultValue)
+      ? deviceColorScheme === 'dark'
+        ? dishesTheme
+        : lightTheme
+      : (manualDarkTheme.value ?? manualDarkTheme.defaultValue)
+        ? dishesTheme
+        : lightTheme;
 
   return (
     <PaperProvider theme={theme}>
