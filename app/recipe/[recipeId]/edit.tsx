@@ -367,7 +367,9 @@ export default function EditRecipeScreen() {
                   <TextInput
                     multiline
                     scrollEnabled={false}
-                    ref={(ref) => (methodRefs.current[index] = ref)}
+                    ref={(ref) => {
+                      methodRefs.current[index] = ref;
+                    }}
                     placeholder='Add step...'
                     style={[methodStyles.text, methodStyles.step]}
                     onChangeText={(text) => setStep(index)(text)}

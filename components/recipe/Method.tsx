@@ -10,6 +10,7 @@ import Animated, {
   withTiming,
   Easing,
 } from 'react-native-reanimated';
+import { selectionAsync } from 'expo-haptics';
 
 type StepComponentProps = {
   step: Step;
@@ -75,6 +76,7 @@ export default function Method({ method }: MethodProps) {
 
   const onPressStep = (index: number) => () => {
     setActiveStepIndex(activeStepIndex === index ? undefined : index);
+    selectionAsync();
   };
 
   return (
