@@ -4,6 +4,7 @@ import { Pressable, StyleSheet } from 'react-native';
 import { View } from '../Themed';
 import { Text } from 'react-native-paper';
 import { useState } from 'react';
+import { selectionAsync } from 'expo-haptics';
 
 type RenderIngredientProps = {
   ingredientEntry: IngredientEntry;
@@ -20,9 +21,14 @@ export function RenderIngredient({
   const [isChecked, setIsChecked] = useState(false);
   const styles = useStyles();
 
+  const onPress = () => {
+    setIsChecked((prev) => !prev);
+    selectionAsync();
+  };
+
   return (
     <Pressable
-      onPress={isPressable ? () => setIsChecked((prev) => !prev) : undefined}
+      onPress={isPressable ? onPress : undefined}
       key={ingredient}
       style={styles.row}
     >
