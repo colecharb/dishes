@@ -2,13 +2,11 @@
 
 _A simple and lightweight digital recipe box — work in progress._
 
-
 <p>
-  <img width="250" src="https://github.com/user-attachments/assets/a99061b3-b425-4108-b0f4-aa9752431133" hspace="10" >
-  <img width="250" src="https://github.com/user-attachments/assets/4aa9f369-2152-4653-afa4-6d68c7319c64" hspace="10" >
+  <img width="250" src="https://github.com/user-attachments/assets/3cdbc4ac-4925-4960-a256-3d3e1326722a" hspace="10" >
+  <img width="250" src="https://github.com/user-attachments/assets/7f0bf915-21cd-4805-9f3c-8763920c9e87" hspace="10" >
   <p>
-  <img width="250" src="https://github.com/user-attachments/assets/e845cc01-5c22-4f07-bc90-47038557a55b" hspace="10" >
-  <img width="250" src="https://github.com/user-attachments/assets/7ee6a6f2-43d0-46a5-97af-1ccb54e6e7e3" hspace="10" >
+  <img width="250" src="https://github.com/user-attachments/assets/c6f8d479-6a89-4354-add3-2a14dc91cf38" hspace="10" >
+  <img width="250" src="https://github.com/user-attachments/assets/d780f4b1-d303-4f38-ae0d-39dc3e4f92d1" hspace="10" >
 </p>
 
-[demo](https://github.com/user-attachments/assets/f4d06c32-b6b1-4107-93e0-0b52703ea6ff)
