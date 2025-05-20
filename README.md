@@ -2,6 +2,8 @@
 
 _A simple and lightweight digital recipe box — work in progress._
 
+Check out a brief video demo [here!](https://youtube.com/shorts/Iay6ePbJe_M)
+
 <p>
   <img width="250" src="https://github.com/user-attachments/assets/3cdbc4ac-4925-4960-a256-3d3e1326722a" hspace="10" >
   <img width="250" src="https://github.com/user-attachments/assets/7f0bf915-21cd-4805-9f3c-8763920c9e87" hspace="10" >
